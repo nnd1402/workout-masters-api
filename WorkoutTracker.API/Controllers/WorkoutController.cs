@@ -26,6 +26,7 @@ namespace WorkoutTracker.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(Workout workout)
         {
+            workout.Date = workout.Date.ToLocalTime();
             await _context.Workouts.AddAsync(workout);
             await _context.SaveChangesAsync();
 
