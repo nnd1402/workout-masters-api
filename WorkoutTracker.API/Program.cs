@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.API.Data;
+using WorkoutTracker.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddTransient<IWorkoutRepository, WorkoutRepository>();
 
 // Add services to the container.
 
@@ -9,8 +11,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<WorkoutDbContext>(
-    o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
+//builder.Services.AddDbContext<WorkoutDbContext>(
+//    o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
