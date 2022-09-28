@@ -1,63 +1,112 @@
-﻿//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using WorkoutTracker.API.Data;
-//using WorkoutTracker.API.Models;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using WorkoutTracker.API.Models;
+using WorkoutTracker.API.Repository;
 
-//namespace WorkoutTracker.API.Controllers
-//{
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class WorkoutController : ControllerBase
-//    {
-//        private readonly WorkoutDbContext _context;
-//        public WorkoutController(WorkoutDbContext context)
-//        {
-//            _context = context;
-//        }
+namespace WorkoutTracker.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class WorkoutController : ControllerBase
+    {
+        readonly IWorkoutRepository _workoutRepository;
+        public WorkoutController(IWorkoutRepository workoutRepository)
+        {
+            _workoutRepository = workoutRepository;
+        }
+        [HttpGet]
+        public async Task<ActionResult> GetWorkouts()
+        {
+            try
+            {
+                return Ok(await _workoutRepository.GetWorkouts());
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error retrieving data from the database");
+            }
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Workout>> GetWorkout(Guid id)
+        {
+            try
+            {
+                var result = await _workoutRepository.GetWorkout(id);
 
-//        [HttpGet]
-//        public async Task<IEnumerable<Workout>> Get()
-//        {
-//            return await _context.Workouts.ToListAsync();
-//        }
+                if (result == null) return NotFound();
 
-//        [HttpPost]
-//        [ProducesResponseType(StatusCodes.Status201Created)]
-//        public async Task<IActionResult> Create(Workout workout)
-//        {
-//            workout.Date = workout.Date.ToLocalTime();
-//            await _context.Workouts.AddAsync(workout);
-//            await _context.SaveChangesAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error retrieving data from the database");
+            }
+        }
 
-//            return Ok(workout);
-//        }
 
-//        [HttpPut("{id}")]
-//        [ProducesResponseType(StatusCodes.Status204NoContent)]
-//        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-//        public async Task<IActionResult> Update(Guid id, Workout workout)
-//        {
-//            if (id != workout.Id) return BadRequest();
+        [HttpPost]
+        public async Task<ActionResult<Workout>> CreateWorkout(Workout workout)
+        {
+            try
+            {
+                if (workout == null)
+                    return BadRequest();
 
-//            _context.Entry(workout).State = EntityState.Modified;
-//            await _context.SaveChangesAsync();
+                var createdWorkout = await _workoutRepository.AddWorkout(workout);
+                return CreatedAtAction(nameof(GetWorkout),
+                new { id = createdWorkout.Id }, createdWorkout);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error creating new workout");
+            }
+        }
 
-//            return NoContent();
-//        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Workout>> UpdateWorkout(Guid id, Workout workout)
+        {
+            try
+            {
+                if (id != workout.Id)
+                    return BadRequest("Workout ID mismatch");
 
-//        [HttpDelete("{id}")]
-//        [ProducesResponseType(StatusCodes.Status204NoContent)]
-//        [ProducesResponseType(StatusCodes.Status404NotFound)]
-//        public async Task<IActionResult> Delete(Guid id)
-//        {
-//            var workoutToDelete = await _context.Workouts.FindAsync(id);
-//            if (workoutToDelete == null) return NotFound();
+                var workoutToUpdate = await _workoutRepository.GetWorkout(id);
 
-//            _context.Workouts.Remove(workoutToDelete);
-//            await _context.SaveChangesAsync();
+                if (workoutToUpdate == null)
+                    return NotFound($"Workout with Id = {id} not found");
 
-//            return NoContent();
-//        }
-//    }
-//}
+                return await _workoutRepository.UpdateWorkout(workout);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error updating data");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Workout>> DeleteWorkout(Guid id)
+        {
+            try
+            {
+                var workoutToDelete = await _workoutRepository.GetWorkout(id);
+
+                if (workoutToDelete == null)
+                {
+                    return NotFound($"Workout with Id = {id} not found");
+                }
+
+                return await _workoutRepository.DeleteWorkout(id);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error deleting data");
+            }
+        }
+    }
+}
+

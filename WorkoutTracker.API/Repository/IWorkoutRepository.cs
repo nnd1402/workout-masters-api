@@ -4,7 +4,7 @@ namespace WorkoutTracker.API.Repository
 {
     public interface IWorkoutRepository
     {
-        Task<IEnumerable<Workout>> GetWorkouts();
+        Task<List<Workout>> GetWorkouts();
         Task<Workout> GetWorkout(Guid Id);
         Task<Workout> AddWorkout(Workout Workout);
         Task<Workout> UpdateWorkout(Workout Workout);

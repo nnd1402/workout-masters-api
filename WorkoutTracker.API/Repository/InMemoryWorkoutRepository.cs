@@ -6,11 +6,9 @@ using WorkoutTracker.API.Models;
 
 namespace WorkoutTracker.API.Repository
 {
-    public class WorkoutRepository : IWorkoutRepository
+    public class InMemoryWorkoutRepository : IWorkoutRepository
     {
-   
-
-        public async Task<IEnumerable<Workout>> GetWorkouts()
+        public async Task<List<Workout>> GetWorkouts()
         {
             using (var _inMemoryDbContext = new InMemoryDbContext())
             {

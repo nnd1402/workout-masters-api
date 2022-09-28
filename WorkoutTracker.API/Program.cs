@@ -3,7 +3,6 @@ using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddTransient<IWorkoutRepository, WorkoutRepository>();
 
 // Add services to the container.
 
@@ -12,14 +11,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddDbContext<WorkoutDbContext>(
-//    o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
     build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
 }));
 
+var configDatabaseType = builder.Configuration.GetValue(typeof(string), "DatabaseType").ToString();
+
+if (configDatabaseType == "Memory")
+{
+    builder.Services.AddTransient<IWorkoutRepository, InMemoryWorkoutRepository>();
+}
+else if (configDatabaseType == "SQL")
+{
+    builder.Services.AddDbContext<WorkoutDbContext>(
+        o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+    builder.Services.AddTransient<IWorkoutRepository, SqlWorkoutRepository>();
+}
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,6 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseCors("corspolicy");
 
