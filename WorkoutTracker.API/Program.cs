@@ -21,19 +21,21 @@ builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 
 var configDatabaseType = builder.Configuration.GetValue(typeof(string), "DatabaseType").ToString();
 
+
+
 if (configDatabaseType == "Memory")
 {
     builder.Services.AddTransient<IWorkoutRepository, InMemoryWorkoutRepository>();
 }
 else if (configDatabaseType == "SQL")
 {
+    builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<WorkoutDbContext>();
     builder.Services.AddDbContext<WorkoutDbContext>(
         o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
     builder.Services.AddTransient<IWorkoutRepository, SqlWorkoutRepository>();
 }
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<WorkoutDbContext>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -72,10 +74,10 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapRazorPages();
-});
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapRazorPages();
+//});
 
 app.MapControllers();
 
