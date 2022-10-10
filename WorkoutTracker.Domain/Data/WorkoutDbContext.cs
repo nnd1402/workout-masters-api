@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.API.Models;
+using WorkoutTracker.Domain;
 
 namespace WorkoutTracker.API.Data
 {
-    public class WorkoutDbContext : DbContext
+    public class WorkoutDbContext : IdentityDbContext<AppUser>
     {
         public WorkoutDbContext(DbContextOptions<WorkoutDbContext> options) : base(options)
         {

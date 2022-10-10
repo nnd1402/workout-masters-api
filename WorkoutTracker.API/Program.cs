@@ -1,12 +1,23 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Repository;
+using WorkoutTracker.Domain;
+using WorkoutTracker.Domain.Extensions;
+using Microsoft.Extensions.DependencyInjection;
+using WorkoutTracker.Domain.Repository;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt =>
+{
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -28,6 +39,11 @@ else if (configDatabaseType == "SQL")
     builder.Services.AddDbContext<WorkoutDbContext>(
         o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
     builder.Services.AddTransient<IWorkoutRepository, SqlWorkoutRepository>();
+
+    builder.Services.AddIdentityServices(builder.Configuration);
+
+    //builder.Services.AddTransient<User>();
+    builder.Services.AddTransient<IAccountRepository, SqlAccountRepository>();
 }
 var app = builder.Build();
 
@@ -43,6 +59,7 @@ app.UseCors("corspolicy");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

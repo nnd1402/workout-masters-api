@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.API", "WorkoutTracker.API\WorkoutTracker.API.csproj", "{462E2D90-260E-4A46-9EA5-E077AD2CEEAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Domain", "WorkoutTracker.Domain\WorkoutTracker.Domain.csproj", "{5E361026-F74A-446F-851D-33E501D79AB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{462E2D90-260E-4A46-9EA5-E077AD2CEEAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{462E2D90-260E-4A46-9EA5-E077AD2CEEAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{462E2D90-260E-4A46-9EA5-E077AD2CEEAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E361026-F74A-446F-851D-33E501D79AB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E361026-F74A-446F-851D-33E501D79AB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E361026-F74A-446F-851D-33E501D79AB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E361026-F74A-446F-851D-33E501D79AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

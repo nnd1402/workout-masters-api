@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.API.Repository;
@@ -14,6 +15,7 @@ namespace WorkoutTracker.API.Controllers
         {
             _workoutRepository = workoutRepository;
         }
+
         [HttpGet]
         public async Task<ActionResult> GetWorkouts()
         {
