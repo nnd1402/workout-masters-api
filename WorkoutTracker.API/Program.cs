@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WorkoutTracker.Domain.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using WorkoutTracker.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,23 +29,8 @@ builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
     build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
 }));
 
-var configDatabaseType = builder.Configuration.GetValue(typeof(string), "DatabaseType").ToString();
+builder.Services.ManageDatabaseServices(builder.Configuration);
 
-if (configDatabaseType == "Memory")
-{
-    builder.Services.AddTransient<IWorkoutRepository, InMemoryWorkoutRepository>();
-}
-else if (configDatabaseType == "SQL")
-{
-    builder.Services.AddDbContext<WorkoutDbContext>(
-        o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
-    builder.Services.AddTransient<IWorkoutRepository, SqlWorkoutRepository>();
-
-    builder.Services.AddIdentityServices(builder.Configuration);
-
-    //builder.Services.AddTransient<User>();
-    builder.Services.AddTransient<IAccountRepository, SqlAccountRepository>();
-}
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

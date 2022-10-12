@@ -35,11 +35,11 @@ namespace WorkoutTracker.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult> Login(string username, string password)
+        public async Task<ActionResult> Login([FromBody] User user)
         {
             try
             {
-                return Ok(await _accountRepo.Login(username, password));
+                return Ok(await _accountRepo.Login(user.UserName, user.Password));
             }
             catch (Exception e)
             {
