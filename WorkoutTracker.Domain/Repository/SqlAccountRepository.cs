@@ -2,12 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.API.Data;
+using WorkoutTracker.API.Models;
 using WorkoutTracker.API.Services;
-using WorkoutTracker.Domain.DTO;
+using WorkoutTracker.Domain.DTO.UserDTOs;
+using WorkoutTracker.Domain.Exceptions;
+using ValidationException = WorkoutTracker.Domain.Exceptions.ValidationException;
 
 namespace WorkoutTracker.Domain.Repository
 {
@@ -30,32 +34,44 @@ namespace WorkoutTracker.Domain.Repository
             _tokenService = tokenService;
         }
 
-        public async Task<UserDto> Register(string username, string password)
+        public async Task<UserOutputDTO> Register(UserInputDTO userDto)
         {
-            if (!await _userManager.Users.AnyAsync(x => x.UserName == username) && !await _userManager.Users.AnyAsync(x => x.Email == username))
-            {
-                var user = new AppUser
-                {
-                    Email = username,
-                    UserName = username,
-                };
-                var res = await _userManager.CreateAsync(user, password);
-                if (res.Succeeded)
-                {
-                    return CreateUserObject(user);
-                }
-                return null;
+            if(string.IsNullOrEmpty(userDto.UserName)) {
+                throw new ValidationException("Username cannot be empty");
             }
+
+            if (string.IsNullOrEmpty(userDto.Password))
+            {
+                throw new ValidationException("Password cannot be empty");
+            }
+
+            if (!await _userManager.Users.AnyAsync(x => x.UserName == userDto.UserName) && !await _userManager.Users.AnyAsync(x => x.Email == userDto.UserName))
+                {
+                    var newUser = new AppUser()
+                    {
+                        Email = userDto.UserName,
+                        UserName = userDto.UserName,
+                    };
+                    var res = await _userManager.CreateAsync(newUser, userDto.Password);
+                    if (res.Succeeded)
+                    {
+                        return CreateUserObject(newUser);
+                    }
+                    throw new NullReferenceException();
+                }
             return null;
         }
 
-        public async Task<UserDto> Login(string username, string password)
+        public async Task<UserOutputDTO> Login(UserInputDTO userDto)
         {
-            var user = await _userManager.FindByEmailAsync(username);
+            var user = await _userManager.FindByEmailAsync(userDto.UserName);
 
-            if (user == null) return null;
+            if (user == null)
+            {
+                throw new NotFoundException();
+            };
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, userDto.Password, false);
 
             if (result.Succeeded)
             {
@@ -64,16 +80,16 @@ namespace WorkoutTracker.Domain.Repository
             return null;
         }
 
-        public async Task<UserDto> GetCurrentUser(string email)
+        public async Task<UserOutputDTO> GetCurrentUser(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
             return CreateUserObject(user);
         }
 
-        private UserDto CreateUserObject(AppUser user)
+        private UserOutputDTO CreateUserObject(AppUser user)
         {
-            return new UserDto
+            return new UserOutputDTO
             {
                 UserName = user.UserName,
                 Token = _tokenService.CreateToken(user)

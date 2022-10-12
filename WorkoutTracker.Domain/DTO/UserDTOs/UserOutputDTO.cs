@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkoutTracker.Domain.DTO
+namespace WorkoutTracker.Domain.DTO.UserDTOs
 {
-    public class UserDto
+    public class UserOutputDTO
     {
         public string UserName { get; set; }
-        public string Password { get; set; }
         public string Token { get; internal set; }
     }
 }

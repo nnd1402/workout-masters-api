@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WorkoutTracker.Domain.DTO;
+using WorkoutTracker.API.Models;
+using WorkoutTracker.Domain.DTO.UserDTOs;
 
 namespace WorkoutTracker.Domain.Repository
 {
     public interface IAccountRepository
     {
-        Task<UserDto> Register(string username, string password);
-        Task<UserDto> Login(string username, string password);
-        Task<UserDto> GetCurrentUser(string email);
+        Task<UserOutputDTO> Register(UserInputDTO userDto);
+        Task<UserOutputDTO> Login(UserInputDTO userDto);
+        Task<UserOutputDTO> GetCurrentUser(string email);
     }
 }
