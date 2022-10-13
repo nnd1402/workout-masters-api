@@ -16,19 +16,19 @@ namespace WorkoutTracker.API.Repository
         {
            return _context.Workouts.ToListAsync();      
         }
-        public async Task<Workout> GetWorkout(Guid Id)
+        public async Task<Workout?> GetWorkout(Guid Id)
         {
             return await _context.Workouts
                .FirstOrDefaultAsync(e => e.Id == Id);
         }
-        public async Task<Workout> AddWorkout(Workout workout)
+        public async Task<Workout?> AddWorkout(Workout workout)
         {
             workout.Date = workout.Date.ToLocalTime();
             var result = await _context.Workouts.AddAsync(workout);
             await _context.SaveChangesAsync();
             return result.Entity;
         }
-        public async Task<Workout> UpdateWorkout(Workout workout)
+        public async Task<Workout?> UpdateWorkout(Workout workout)
         {
             var result = await _context.Workouts
                 .FirstOrDefaultAsync(e => e.Id == workout.Id);
@@ -46,7 +46,7 @@ namespace WorkoutTracker.API.Repository
             }
             return null;
         }
-        public async Task<Workout> DeleteWorkout(Guid Id)
+        public async Task<Workout?> DeleteWorkout(Guid Id)
         {
             var result = await _context.Workouts
                             .FirstOrDefaultAsync(e => e.Id == Id);

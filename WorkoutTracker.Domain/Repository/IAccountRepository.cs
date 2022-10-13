@@ -10,8 +10,8 @@ namespace WorkoutTracker.Domain.Repository
 {
     public interface IAccountRepository
     {
-        Task<UserOutputDTO> Register(UserInputDTO userDto);
-        Task<UserOutputDTO> Login(UserInputDTO userDto);
-        Task<UserOutputDTO> GetCurrentUser(string email);
+        Task<UserOutputDTO?> Register(UserInputDTO userDto);
+        Task<UserOutputDTO?> Login(UserInputDTO userDto);
+        Task<UserOutputDTO?> GetCurrentUser(string email);
     }
 }

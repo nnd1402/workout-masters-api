@@ -26,7 +26,7 @@ namespace WorkoutTracker.Domain.Repository
             WorkoutDbContext context,
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            TokenService tokenService) 
+            TokenService tokenService)
         {
             _context = context;
             _userManager = userManager;
@@ -34,35 +34,26 @@ namespace WorkoutTracker.Domain.Repository
             _tokenService = tokenService;
         }
 
-        public async Task<UserOutputDTO> Register(UserInputDTO userDto)
+        public async Task<UserOutputDTO?> Register(UserInputDTO userDto)
         {
-            if(string.IsNullOrEmpty(userDto.UserName)) {
-                throw new ValidationException("Username cannot be empty");
-            }
-
-            if (string.IsNullOrEmpty(userDto.Password))
+            if (await _userManager.Users.AnyAsync(x => x.UserName == userDto.UserName) && await _userManager.Users.AnyAsync(x => x.Email == userDto.UserName))
             {
-                throw new ValidationException("Password cannot be empty");
+                throw new ValidationException("This username already exists");
             }
-
-            if (!await _userManager.Users.AnyAsync(x => x.UserName == userDto.UserName) && !await _userManager.Users.AnyAsync(x => x.Email == userDto.UserName))
-                {
-                    var newUser = new AppUser()
-                    {
-                        Email = userDto.UserName,
-                        UserName = userDto.UserName,
-                    };
-                    var res = await _userManager.CreateAsync(newUser, userDto.Password);
-                    if (res.Succeeded)
-                    {
-                        return CreateUserObject(newUser);
-                    }
-                    throw new NullReferenceException();
-                }
+            var newUser = new AppUser()
+            {
+                Email = userDto.UserName,
+                UserName = userDto.UserName,
+            };
+            var res = await _userManager.CreateAsync(newUser, userDto.Password);
+            if (res.Succeeded)
+            {
+                return CreateUserObject(newUser);
+            }
             return null;
         }
 
-        public async Task<UserOutputDTO> Login(UserInputDTO userDto)
+        public async Task<UserOutputDTO?> Login(UserInputDTO userDto)
         {
             var user = await _userManager.FindByEmailAsync(userDto.UserName);
 
