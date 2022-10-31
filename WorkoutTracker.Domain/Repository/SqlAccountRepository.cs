@@ -57,6 +57,13 @@ namespace WorkoutTracker.Domain.Repository
         {
             var user = await _userManager.FindByEmailAsync(userDto.UserName);
 
+            var checkPassword = await _userManager.CheckPasswordAsync(user, userDto.Password);
+
+            if(checkPassword == false)
+            {
+                throw new ValidationException("Wrong password");
+            }
+
             if (user == null)
             {
                 throw new NotFoundException();
