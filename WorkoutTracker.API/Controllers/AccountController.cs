@@ -7,7 +7,7 @@ using WorkoutTracker.API.Services;
 using WorkoutTracker.Domain;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
-using WorkoutTracker.Domain.Repository;
+using WorkoutTracker.Domain.Repositories.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
 {

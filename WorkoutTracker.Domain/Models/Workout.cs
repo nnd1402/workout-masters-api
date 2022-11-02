@@ -1,4 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Net;
+using System.Reflection.Emit;
+using System.Text.Json.Serialization;
+using System.Xml.Linq;
+using WorkoutTracker.Domain;
+using WorkoutTracker.Domain.DTO.WorkoutDTO;
 
 namespace WorkoutTracker.API.Models
 {
@@ -10,6 +17,31 @@ namespace WorkoutTracker.API.Models
         public int Duration { get; set; }
         public string Description { get; set; }
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; }     
+
+        public string AppUserId { get; set; }
+
+        public Workout() { }
+
+        public WorkoutOutputDTO ConvertToDTO()
+        {
+            return new WorkoutOutputDTO
+            {
+                Id = this.Id,
+                Title = this.Title,
+                Duration = this.Duration,
+                Description = this.Description,
+                Date = this.Date,
+                AppUserId = this.AppUserId
+            };
+        }
+
+        public Workout(WorkoutInputDTO workoutOutputDTO)
+        {
+            Title = workoutOutputDTO.Title;
+            Duration = workoutOutputDTO.Duration;
+            Description = workoutOutputDTO.Description;
+            Date = workoutOutputDTO.Date;
+        }
     }
 }

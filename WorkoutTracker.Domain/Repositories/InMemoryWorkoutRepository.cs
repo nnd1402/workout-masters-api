@@ -2,10 +2,11 @@
 using System;
 using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Models;
+using WorkoutTracker.Domain.Repositories.Interfaces;
 
 namespace WorkoutTracker.API.Repository
 {
-    public class InMemoryWorkoutRepository : IWorkoutRepository
+    public class InMemoryWorkoutRepository : IInMemoryWorkoutRepository
     {
         public async Task<List<Workout>> GetWorkouts()
         {

@@ -11,6 +11,7 @@ using WorkoutTracker.API.Models;
 using WorkoutTracker.API.Services;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
+using WorkoutTracker.Domain.Repositories.Interfaces;
 using ValidationException = WorkoutTracker.Domain.Exceptions.ValidationException;
 
 namespace WorkoutTracker.Domain.Repository

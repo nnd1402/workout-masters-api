@@ -8,7 +8,7 @@ using WorkoutTracker.API.Data;
 
 #nullable disable
 
-namespace WorkoutTracker.API.Data.Migrations
+namespace WorkoutTracker.Domain.Migrations
 {
     [DbContext(typeof(WorkoutDbContext))]
     partial class WorkoutDbContextModelSnapshot : ModelSnapshot
@@ -161,6 +161,10 @@ namespace WorkoutTracker.API.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -177,7 +181,9 @@ namespace WorkoutTracker.API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Workouts");
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Workouts", (string)null);
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.AppUser", b =>
@@ -294,6 +300,22 @@ namespace WorkoutTracker.API.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkoutTracker.API.Models.Workout", b =>
+                {
+                    b.HasOne("WorkoutTracker.Domain.AppUser", "AppUser")
+                        .WithMany("Workouts")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("WorkoutTracker.Domain.AppUser", b =>
+                {
+                    b.Navigation("Workouts");
                 });
 #pragma warning restore 612, 618
         }

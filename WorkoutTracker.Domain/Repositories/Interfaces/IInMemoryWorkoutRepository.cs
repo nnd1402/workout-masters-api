@@ -1,8 +1,13 @@
-﻿using WorkoutTracker.API.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using WorkoutTracker.API.Models;
 
-namespace WorkoutTracker.API.Repository
+namespace WorkoutTracker.Domain.Repositories.Interfaces
 {
-    public interface IWorkoutRepository
+    public interface IInMemoryWorkoutRepository
     {
         Task<List<Workout>> GetWorkouts();
         Task<Workout?> GetWorkout(Guid Id);

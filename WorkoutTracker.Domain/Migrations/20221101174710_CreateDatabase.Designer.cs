@@ -12,8 +12,8 @@ using WorkoutTracker.API.Data;
 namespace WorkoutTracker.Domain.Migrations
 {
     [DbContext(typeof(WorkoutDbContext))]
-    [Migration("20221010184216_IdentityAdded2")]
-    partial class IdentityAdded2
+    [Migration("20221101174710_CreateDatabase")]
+    partial class CreateDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -163,6 +163,10 @@ namespace WorkoutTracker.Domain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -178,6 +182,8 @@ namespace WorkoutTracker.Domain.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Workouts");
                 });
@@ -296,6 +302,22 @@ namespace WorkoutTracker.Domain.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkoutTracker.API.Models.Workout", b =>
+                {
+                    b.HasOne("WorkoutTracker.Domain.AppUser", "AppUser")
+                        .WithMany("Workouts")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("WorkoutTracker.Domain.AppUser", b =>
+                {
+                    b.Navigation("Workouts");
                 });
 #pragma warning restore 612, 618
         }

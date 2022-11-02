@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 
-namespace WorkoutTracker.Domain.Repository
+namespace WorkoutTracker.Domain.Repositories.Interfaces
 {
     public interface IAccountRepository
     {
