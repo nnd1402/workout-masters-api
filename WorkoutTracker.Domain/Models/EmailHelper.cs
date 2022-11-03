@@ -15,14 +15,14 @@ namespace WorkoutTracker.Domain.Models
         public void SendEmail(string userEmail, string confirmationLink)
         {
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(userEmail));
+            email.From.Add(MailboxAddress.Parse("workouttestapp01@gmail.com"));
             email.To.Add(MailboxAddress.Parse(userEmail));
             email.Subject = "Confirm you email";
             email.Body = new TextPart(TextFormat.Html) { Text = confirmationLink };
 
             using var smtp = new SmtpClient();
-            smtp.Connect("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate(userEmail, "C1KuGvYMzkTWsfxXPZ");
+            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate("workoutapptest01@gmail.com", "nvfhmzvnqjfxyhan");
             smtp.Send(email);
             smtp.Disconnect(true);
         }

@@ -10,6 +10,7 @@ using WorkoutTracker.Domain.Services.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -48,6 +49,7 @@ namespace WorkoutTracker.API.Controllers
             
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
