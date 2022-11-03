@@ -28,7 +28,7 @@ namespace WorkoutTracker.API.Extensions
                 services.AddIdentityServices(config);
 
                 //builder.Services.AddTransient<User>();
-                services.AddTransient<IAccountRepository, SqlAccountRepository>();
+                services.AddTransient<IAccountRepository, AccountRepository>();
             }
             return services;
         }

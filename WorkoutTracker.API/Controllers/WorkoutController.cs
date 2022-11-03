@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.API.Models;
-using WorkoutTracker.API.Repository;
 using WorkoutTracker.Domain.DTO.WorkoutDTO;
 using WorkoutTracker.Domain.Exceptions;
 using WorkoutTracker.Domain.Services.Interfaces;

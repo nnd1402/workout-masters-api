@@ -1,29 +1,22 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkoutTracker.API.Data;
-using WorkoutTracker.API.Models;
 using WorkoutTracker.API.Services;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
 using WorkoutTracker.Domain.Repositories.Interfaces;
-using ValidationException = WorkoutTracker.Domain.Exceptions.ValidationException;
+
 
 namespace WorkoutTracker.Domain.Repository
 {
-    public class SqlAccountRepository : IAccountRepository
+    public class AccountRepository : IAccountRepository
     {
         private readonly WorkoutDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
 
-        public SqlAccountRepository(
+        public AccountRepository(
             WorkoutDbContext context,
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,

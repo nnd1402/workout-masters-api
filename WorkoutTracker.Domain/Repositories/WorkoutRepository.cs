@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using WorkoutTracker.API.Data;
+﻿using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.Domain.Repositories;
 using WorkoutTracker.Domain.Repositories.Interfaces;
