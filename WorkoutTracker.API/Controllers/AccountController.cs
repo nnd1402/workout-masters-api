@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using WorkoutTracker.Domain;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
-using WorkoutTracker.Domain.Repositories.Interfaces;
+using WorkoutTracker.Domain.Models;
+using WorkoutTracker.Domain.Services.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -11,24 +14,49 @@ namespace WorkoutTracker.API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountRepository _accountRepo;
-        public AccountController(IAccountRepository accountRepo)
+        private readonly IAccountService _accountService;
+        //private readonly IEmailService _emailService;
+        private readonly UserManager<AppUser> _userManager;
+        public AccountController(IAccountService accountService, UserManager<AppUser> userManager)
         {
-            _accountRepo = accountRepo;
+            _accountService = accountService;
+            _userManager = userManager;
+            //_emailService = emailService;
         }
 
         [AllowAnonymous]
         [HttpPost("create")]     
-        public async Task<ActionResult<UserOutputDTO>> Register([FromBody] UserInputDTO user)
+        public async Task<ActionResult<UserOutputDTO>> Register([FromBody] UserInputDTO userDto)
         {
-            try
+            var newUser = new AppUser()
             {
-                return Ok(await _accountRepo.Register(user));
-            }
-            catch (ValidationException e)
+                Email = userDto.UserName,
+                UserName = userDto.UserName,
+            };
+            var res = await _userManager.CreateAsync(newUser, userDto.Password);
+            if (res.Succeeded)
             {
-                return BadRequest($"Validation error: {e.Message}");
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { newUser.Email, token }, Request.Scheme);
+                EmailHelper emailHelper = new EmailHelper();
+                emailHelper.SendEmail(newUser.Email, confirmationLink);
+                return Ok(_accountService.CreateUserObject(newUser));
             }
+          
+            
+                return BadRequest();
+            
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return BadRequest("Fail");
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            return Ok("Email confirmed!");
         }
 
         [AllowAnonymous]
@@ -37,7 +65,7 @@ namespace WorkoutTracker.API.Controllers
         {
             try
             {
-                return Ok(await _accountRepo.Login(userDto));
+                return Ok(await _accountService.Login(userDto));
             }
             catch (Exception)
             {
@@ -50,7 +78,7 @@ namespace WorkoutTracker.API.Controllers
         [HttpGet("current")]
         public async Task<ActionResult<UserInputDTO>> GetCurrentUser()
         {
-            return Ok(await _accountRepo.GetCurrentUser(User.FindFirstValue(ClaimTypes.Email)));
+            return Ok(await _accountService.GetCurrentUser(User.FindFirstValue(ClaimTypes.Email)));
         }
     }
 }

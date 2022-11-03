@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 
-namespace WorkoutTracker.Domain.Repositories.Interfaces
+namespace WorkoutTracker.Domain.Services.Interfaces
 {
-    public interface IAccountRepository
+    public interface IAccountService
     {
         Task<UserOutputDTO?> Register(UserInputDTO userDto);
         Task<UserOutputDTO?> Login(UserInputDTO userDto);
         Task<UserOutputDTO?> GetCurrentUser(string email);
+        UserOutputDTO CreateUserObject(AppUser user);
     }
 }

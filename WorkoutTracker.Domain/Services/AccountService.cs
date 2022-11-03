@@ -1,22 +1,24 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System.Security.Policy;
 using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Services;
+//using WorkoutTracker.Domain.DTO.EmailDTO;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
-using WorkoutTracker.Domain.Repositories.Interfaces;
+using WorkoutTracker.Domain.Services.Interfaces;
 
-
-namespace WorkoutTracker.Domain.Repository
+namespace WorkoutTracker.Domain.Services
 {
-    public class AccountRepository : IAccountRepository
+    public class AccountService : IAccountService
     {
         private readonly WorkoutDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
 
-        public AccountRepository(
+        public AccountService(
             WorkoutDbContext context,
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
@@ -53,7 +55,7 @@ namespace WorkoutTracker.Domain.Repository
 
             var checkPassword = await _userManager.CheckPasswordAsync(user, userDto.Password);
 
-            if(checkPassword == false)
+            if (checkPassword == false)
             {
                 throw new ValidationException("Wrong password");
             }
@@ -79,7 +81,7 @@ namespace WorkoutTracker.Domain.Repository
             return CreateUserObject(user);
         }
 
-        private UserOutputDTO CreateUserObject(AppUser user)
+        public UserOutputDTO CreateUserObject(AppUser user)
         {
             return new UserOutputDTO
             {

@@ -1,11 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using WorkoutTracker.API.Data;
-using WorkoutTracker.API.Repository;
-using WorkoutTracker.Domain;
-using WorkoutTracker.Domain.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-using WorkoutTracker.Domain.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using WorkoutTracker.API.Extensions;

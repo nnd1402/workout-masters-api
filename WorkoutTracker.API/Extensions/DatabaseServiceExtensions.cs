@@ -3,7 +3,6 @@ using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Repository;
 using WorkoutTracker.Domain.Extensions;
 using WorkoutTracker.Domain.Repositories.Interfaces;
-using WorkoutTracker.Domain.Repository;
 using WorkoutTracker.Domain.Services;
 using WorkoutTracker.Domain.Services.Interfaces;
 
@@ -24,11 +23,9 @@ namespace WorkoutTracker.API.Extensions
                     o => o.UseSqlServer(config.GetConnectionString("SqlServer")));
                 services.AddTransient<IWorkoutRepository, WorkoutRepository>();
                 services.AddTransient<IWorkoutService, WorkoutService>();
-
+                services.AddTransient<IAccountService, AccountService>();
+               // services.AddTransient<IEmailService, EmailService>();
                 services.AddIdentityServices(config);
-
-                //builder.Services.AddTransient<User>();
-                services.AddTransient<IAccountRepository, AccountRepository>();
             }
             return services;
         }
