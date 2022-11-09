@@ -24,7 +24,6 @@ namespace WorkoutTracker.API.Extensions
                 services.AddTransient<IWorkoutRepository, WorkoutRepository>();
                 services.AddTransient<IWorkoutService, WorkoutService>();
                 services.AddTransient<IAccountService, AccountService>();
-               // services.AddTransient<IEmailService, EmailService>();
                 services.AddIdentityServices(config);
             }
             return services;

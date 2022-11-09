@@ -5,7 +5,7 @@ using System.Security.Claims;
 using WorkoutTracker.Domain;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
-using WorkoutTracker.Domain.Models;
+using WorkoutTracker.Domain.Helpers;
 using WorkoutTracker.Domain.Services.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
@@ -16,13 +16,11 @@ namespace WorkoutTracker.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        //private readonly IEmailService _emailService;
         private readonly UserManager<AppUser> _userManager;
         public AccountController(IAccountService accountService, UserManager<AppUser> userManager)
         {
             _accountService = accountService;
             _userManager = userManager;
-            //_emailService = emailService;
         }
 
         [AllowAnonymous]
@@ -39,14 +37,11 @@ namespace WorkoutTracker.API.Controllers
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 var confirmationLink = Url.Action("ConfirmEmail", "Account", new { newUser.Email, token }, Request.Scheme);
-                EmailHelper emailHelper = new EmailHelper();
-                emailHelper.SendEmail(newUser.Email, confirmationLink);
+                EmailSender emailSender = new EmailSender();
+                emailSender.SendEmail(newUser.Email, confirmationLink);
                 return Ok(_accountService.CreateUserObject(newUser));
             }
-          
-            
-                return BadRequest();
-            
+                return BadRequest();     
         }
 
         [AllowAnonymous]
