@@ -65,6 +65,11 @@ namespace WorkoutTracker.Domain.Services
                 throw new NotFoundException();
             };
 
+            if(user.EmailConfirmed == false)
+            {
+                throw new ValidationException("Email must be confirmed first!");
+            }
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, userDto.Password, false);
 
             if (result.Succeeded)
