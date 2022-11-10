@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Security.Policy;
 using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Services;
-//using WorkoutTracker.Domain.DTO.EmailDTO;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
 using WorkoutTracker.Domain.Services.Interfaces;
@@ -65,7 +62,7 @@ namespace WorkoutTracker.Domain.Services
                 throw new NotFoundException();
             };
 
-            if(user.EmailConfirmed == false)
+            if (user.EmailConfirmed == false)
             {
                 throw new ValidationException("Email must be confirmed first!");
             }

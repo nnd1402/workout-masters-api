@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.Domain.DTO.WorkoutDTO;
 using WorkoutTracker.Domain.Exceptions;
