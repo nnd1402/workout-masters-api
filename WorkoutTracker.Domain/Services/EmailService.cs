@@ -18,7 +18,6 @@ namespace WorkoutTracker.Domain.Services
 
         public void SendEmail(string userEmail, string confirmationLink)
         {
-            //sakriti url, relative putanja
             string messageBody = ReadEmailTemplate(_configuration.GetSection("EmailTemplatePath").Value);
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
 
@@ -28,7 +27,6 @@ namespace WorkoutTracker.Domain.Services
             email.Subject = "Confirm you account";
             email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
 
-            //using var smtp = new SmtpClient();
             using (var smtp = new SmtpClient())
             {
                 smtp.Connect(_configuration.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
