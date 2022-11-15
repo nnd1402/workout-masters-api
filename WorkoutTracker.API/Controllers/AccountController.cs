@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Web;
 using WorkoutTracker.Domain;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
@@ -23,8 +24,8 @@ namespace WorkoutTracker.API.Controllers
             _userManager = userManager;
         }
 
-        [AllowAnonymous]
-        [HttpPost("create")]     
+
+        [HttpPost("create")]
         public async Task<ActionResult<UserOutputDTO>> Register([FromBody] UserInputDTO userDto)
         {
             var newUser = new AppUser()
@@ -36,27 +37,33 @@ namespace WorkoutTracker.API.Controllers
             if (res.Succeeded)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { newUser.Email, token }, Request.Scheme);
+                string tokenHtmlVersion = HttpUtility.UrlEncode(token);
+                var confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
                 EmailSender emailSender = new EmailSender();
                 emailSender.SendEmail(newUser.Email, confirmationLink);
                 return Ok(_accountService.CreateUserObject(newUser));
             }
-                return BadRequest();     
+            return BadRequest();
         }
 
-        [AllowAnonymous]
+
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                return BadRequest("Fail");
+                return BadRequest("Account confirmation failed");
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
-            return Ok("Email confirmed!");
+            if (result.Succeeded)
+            {
+                return Ok("Account confirmation successful");
+            }
+            return BadRequest();
+
         }
 
-        [AllowAnonymous]
+
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] UserInputDTO userDto)
         {

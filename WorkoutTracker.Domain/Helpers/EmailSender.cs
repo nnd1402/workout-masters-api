@@ -9,8 +9,9 @@ namespace WorkoutTracker.Domain.Helpers
     {
         public void SendEmail(string userEmail, string confirmationLink)
         {
+            //sakriti url, relative putanja
             string messageBody = ReadEmailTemplate("C:\\Users\\nenad\\source\\repos\\WorkoutTracker.API\\WorkoutTracker.Domain\\Templates\\EmailTemplate.html");
-            var updatedMessageBody =  messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
+            var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
 
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse("workouttestapp01@gmail.com"));
@@ -18,11 +19,14 @@ namespace WorkoutTracker.Domain.Helpers
             email.Subject = "Confirm you account";
             email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
 
-            using var smtp = new SmtpClient();
-            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate("workoutapptest01@gmail.com", "nvfhmzvnqjfxyhan");
-            smtp.Send(email);
-            smtp.Disconnect(true);
+            //using var smtp = new SmtpClient();
+            using (var smtp = new SmtpClient())
+            {
+                smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                smtp.Authenticate("workoutapptest01@gmail.com", "nvfhmzvnqjfxyhan");
+                smtp.Send(email);
+                smtp.Disconnect(true);
+            }
         }
 
         private string ReadEmailTemplate(string templatePath)

@@ -7,6 +7,7 @@ using WorkoutTracker.Domain.Services.Interfaces;
 namespace WorkoutTracker.API.Controllers
 {
     [Route("api/[controller]")]
+    //[Route("[controller]/[action]")]
     [ApiController]
     public class WorkoutController : ControllerBase
     {
