@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
 using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Services;
 using WorkoutTracker.Domain.DTO.UserDTOs;
@@ -10,21 +11,21 @@ namespace WorkoutTracker.Domain.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly WorkoutDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
+        private readonly IEmailService _emailService;
 
         public AccountService(
-            WorkoutDbContext context,
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            TokenService tokenService)
+            TokenService tokenService,
+            IEmailService emailService)
         {
-            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _emailService = emailService;
         }
 
         public async Task<UserOutputDTO?> Register(UserInputDTO userDto)
@@ -41,6 +42,10 @@ namespace WorkoutTracker.Domain.Services
             var res = await _userManager.CreateAsync(newUser, userDto.Password);
             if (res.Succeeded)
             {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                string tokenHtmlVersion = HttpUtility.UrlEncode(token);
+                var confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
+                _emailService.SendEmail(newUser.Email, confirmationLink);
                 return CreateUserObject(newUser);
             }
             return null;

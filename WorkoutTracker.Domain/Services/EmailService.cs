@@ -1,20 +1,29 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
+﻿using MailKit.Security;
+using Microsoft.Extensions.Configuration;
 using MimeKit.Text;
+using MimeKit;
+using MailKit.Net.Smtp;
+using WorkoutTracker.Domain.Services.Interfaces;
 
-namespace WorkoutTracker.Domain.Helpers
+namespace WorkoutTracker.Domain.Services
 {
-    public class EmailSender
+    public class EmailService : IEmailService
     {
+        private readonly IConfiguration _configuration;
+        public EmailService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+
         public void SendEmail(string userEmail, string confirmationLink)
         {
             //sakriti url, relative putanja
-            string messageBody = ReadEmailTemplate("C:\\Users\\nenad\\source\\repos\\WorkoutTracker.API\\WorkoutTracker.Domain\\Templates\\EmailTemplate.html");
+            string messageBody = ReadEmailTemplate(_configuration.GetSection("EmailTemplatePath").Value);
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
 
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse("workouttestapp01@gmail.com"));
+            email.From.Add(MailboxAddress.Parse(_configuration.GetSection("EmailUsername").Value));
             email.To.Add(MailboxAddress.Parse(userEmail));
             email.Subject = "Confirm you account";
             email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
@@ -22,8 +31,8 @@ namespace WorkoutTracker.Domain.Helpers
             //using var smtp = new SmtpClient();
             using (var smtp = new SmtpClient())
             {
-                smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                smtp.Authenticate("workoutapptest01@gmail.com", "nvfhmzvnqjfxyhan");
+                smtp.Connect(_configuration.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
+                smtp.Authenticate(_configuration.GetSection("EmailUsername").Value, _configuration.GetSection("EmailPassword").Value);
                 smtp.Send(email);
                 smtp.Disconnect(true);
             }

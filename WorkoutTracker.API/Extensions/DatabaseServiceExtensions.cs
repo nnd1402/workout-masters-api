@@ -22,6 +22,7 @@ namespace WorkoutTracker.API.Extensions
                 services.AddDbContext<WorkoutDbContext>(
                     o => o.UseSqlServer(config.GetConnectionString("SqlServer")));
                 services.AddTransient<IWorkoutRepository, WorkoutRepository>();
+                services.AddTransient<IEmailService, EmailService>();
                 services.AddTransient<IWorkoutService, WorkoutService>();
                 services.AddTransient<IAccountService, AccountService>();
                 services.AddIdentityServices(config);

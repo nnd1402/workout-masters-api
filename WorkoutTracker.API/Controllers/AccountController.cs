@@ -5,8 +5,6 @@ using System.Security.Claims;
 using System.Web;
 using WorkoutTracker.Domain;
 using WorkoutTracker.Domain.DTO.UserDTOs;
-using WorkoutTracker.Domain.Exceptions;
-using WorkoutTracker.Domain.Helpers;
 using WorkoutTracker.Domain.Services.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
@@ -18,7 +16,7 @@ namespace WorkoutTracker.API.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly UserManager<AppUser> _userManager;
-        public AccountController(IAccountService accountService, UserManager<AppUser> userManager)
+        public AccountController(IAccountService accountService, UserManager<AppUser> userManager, IEmailService emailService)
         {
             _accountService = accountService;
             _userManager = userManager;
@@ -28,22 +26,14 @@ namespace WorkoutTracker.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<UserOutputDTO>> Register([FromBody] UserInputDTO userDto)
         {
-            var newUser = new AppUser()
+            try
             {
-                Email = userDto.UserName,
-                UserName = userDto.UserName,
-            };
-            var res = await _userManager.CreateAsync(newUser, userDto.Password);
-            if (res.Succeeded)
-            {
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-                string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-                var confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
-                EmailSender emailSender = new EmailSender();
-                emailSender.SendEmail(newUser.Email, confirmationLink);
-                return Ok(_accountService.CreateUserObject(newUser));
+                return Ok(await _accountService.Register(userDto));
             }
-            return BadRequest();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
@@ -60,7 +50,6 @@ namespace WorkoutTracker.API.Controllers
                 return Ok("Account confirmation successful");
             }
             return BadRequest();
-
         }
 
 
