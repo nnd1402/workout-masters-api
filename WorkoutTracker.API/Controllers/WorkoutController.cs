@@ -6,8 +6,7 @@ using WorkoutTracker.Domain.Services.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
 {
-    [Route("api/[controller]")]
-    //[Route("[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class WorkoutController : ControllerBase
     {
@@ -18,8 +17,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet]
-        [Route("allWorkouts")]
-        public ActionResult GetWorkouts()
+        public ActionResult List()
         {
             try
             {
@@ -33,7 +31,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetWorkoutsByUser()
+        public ActionResult ListByUser()
         {
             try
             {
@@ -47,7 +45,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult GetWorkout(Guid id)
+        public ActionResult GetById(Guid id)
         {
             try
             {
@@ -60,7 +58,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateWorkout(WorkoutInputDTO workout)
+        public ActionResult Create(WorkoutInputDTO workout)
         {
             try
             {
@@ -73,7 +71,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult UpdateWorkout(Guid id, WorkoutInputDTO workout)
+        public ActionResult Update(Guid id, WorkoutInputDTO workout)
         {
             try
             {
@@ -87,7 +85,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<Workout> DeleteWorkout(Guid id)
+        public ActionResult<Workout> Delete(Guid id)
         {
             try
             {

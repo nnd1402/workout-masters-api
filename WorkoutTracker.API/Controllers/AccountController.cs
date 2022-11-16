@@ -9,7 +9,7 @@ using WorkoutTracker.Domain.Services.Interfaces;
 namespace WorkoutTracker.API.Controllers
 {
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<ActionResult<UserOutputDTO>> Register([FromBody] UserInputDTO userDto)
         {
             try
@@ -52,7 +52,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
 
-        [HttpPost("login")]
+        [HttpPost]
         public async Task<ActionResult> Login([FromBody] UserInputDTO userDto)
         {
             try
