@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 using System.Web;
 using WorkoutTracker.API.Services;
 using WorkoutTracker.Domain.DTO.UserDTOs;
@@ -31,8 +32,23 @@ namespace WorkoutTracker.Domain.Services
         {
             if (await _userManager.Users.AnyAsync(x => x.UserName == userDto.UserName) && await _userManager.Users.AnyAsync(x => x.Email == userDto.UserName))
             {
-                throw new ValidationException("This username already exists");
+                throw new ValidationException("User with this email address already exists");
             }
+            if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
+            {
+                throw new ValidationException("Please fill in all fields!");
+            }
+            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+            if (!emailMatch.Success)
+            {
+                throw new ValidationException("Invalid email address.");
+            }
+            var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
+            if (!passwordMatch.Success)
+            {
+                throw new ValidationException("Invalid password");
+            }
+
             var newUser = new AppUser()
             {
                 Email = userDto.UserName,
@@ -41,9 +57,9 @@ namespace WorkoutTracker.Domain.Services
             var res = await _userManager.CreateAsync(newUser, userDto.Password);
             if (res.Succeeded)
             {
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-                var confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
+                string confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
                 _emailService.SendEmail(newUser.Email, confirmationLink);
                 return CreateUserObject(newUser);
             }
@@ -52,26 +68,62 @@ namespace WorkoutTracker.Domain.Services
 
         public async Task<UserOutputDTO?> Login(UserInputDTO userDto)
         {
-            var user = await _userManager.FindByEmailAsync(userDto.UserName);
-
-            var checkPassword = await _userManager.CheckPasswordAsync(user, userDto.Password);
-
-            if (checkPassword == false)
+            if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
             {
-                throw new ValidationException("Wrong password");
+                throw new ValidationException("Please fill in all fields!");
             }
+
+            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+            if (!emailMatch.Success)
+            {
+                throw new ValidationException("Invalid email address.");
+            }
+
+            var user = await _userManager.FindByEmailAsync(userDto.UserName);
 
             if (user == null)
             {
-                throw new NotFoundException();
-            };
+                throw new ValidationException("User with this email address doesn't exist.");
+            }
+
+            var checkPassword = await _userManager.CheckPasswordAsync(user, userDto.Password);
+
+            var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
+            if (!passwordMatch.Success)
+            {
+                throw new ValidationException("Invalid password.");
+            }
+
+            if (checkPassword == false)
+            {
+                throw new ValidationException("Wrong password.");
+            }
 
             if (user.EmailConfirmed == false)
             {
-                throw new ValidationException("Email must be confirmed first!");
+                string newToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string tokenHtmlVersion = HttpUtility.UrlEncode(newToken);
+                string confirmationLink = $"http://localhost:3000/account-confirmation?Email={user.Email}&token={tokenHtmlVersion}";
+                _emailService.SendEmail(user.Email, confirmationLink);
+                throw new ValidationException("Email must be confirmed first! New confirmation email has been sent to your email address.");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, userDto.Password, false);
+
+            if (result.Succeeded)
+            {
+                return CreateUserObject(user);
+            }
+            return null;
+        }
+
+        public async Task<UserOutputDTO?> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return null;
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
 
             if (result.Succeeded)
             {

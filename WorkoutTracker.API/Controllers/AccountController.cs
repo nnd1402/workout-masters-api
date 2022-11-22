@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Web;
 using WorkoutTracker.Domain;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Services.Interfaces;
@@ -39,16 +40,14 @@ namespace WorkoutTracker.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return BadRequest("Account confirmation failed");
-
-            var result = await _userManager.ConfirmEmailAsync(user, token);
-            if (result.Succeeded)
+            try
             {
-                return Ok("Account confirmation successful");
+                return Ok(await _accountService.ConfirmEmail(token, email));
             }
-            return BadRequest();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
@@ -59,10 +58,9 @@ namespace WorkoutTracker.API.Controllers
             {
                 return Ok(await _accountService.Login(userDto));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
+                return BadRequest(ex.Message);
             }
         }
 

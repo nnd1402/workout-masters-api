@@ -6,6 +6,7 @@ namespace WorkoutTracker.Domain.Services.Interfaces
     {
         Task<UserOutputDTO?> Register(UserInputDTO userDto);
         Task<UserOutputDTO?> Login(UserInputDTO userDto);
+        Task<UserOutputDTO?> ConfirmEmail(string token, string email);
         Task<UserOutputDTO?> GetCurrentUser(string email);
         UserOutputDTO CreateUserObject(AppUser user);
     }
