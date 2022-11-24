@@ -41,7 +41,7 @@ namespace WorkoutTracker.Domain.Services
             var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
             if (!emailMatch.Success)
             {
-                throw new ValidationException("Invalid email address.");
+                throw new ValidationException("Invalid email address");
             }
             var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
             if (!passwordMatch.Success)
@@ -76,14 +76,14 @@ namespace WorkoutTracker.Domain.Services
             var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
             if (!emailMatch.Success)
             {
-                throw new ValidationException("Invalid email address.");
+                throw new ValidationException("Invalid email address");
             }
 
             var user = await _userManager.FindByEmailAsync(userDto.UserName);
 
             if (user == null)
             {
-                throw new ValidationException("User with this email address doesn't exist.");
+                throw new ValidationException("User with this email address doesn't exist");
             }
 
             var checkPassword = await _userManager.CheckPasswordAsync(user, userDto.Password);
@@ -91,12 +91,12 @@ namespace WorkoutTracker.Domain.Services
             var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
             if (!passwordMatch.Success)
             {
-                throw new ValidationException("Invalid password.");
+                throw new ValidationException("Invalid password");
             }
 
             if (checkPassword == false)
             {
-                throw new ValidationException("Wrong password.");
+                throw new ValidationException("Wrong password");
             }
 
             if (user.EmailConfirmed == false)

@@ -53,7 +53,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (NotFoundException)
             {
-                return NotFound($"Workout with the Id: {id} was not found");
+                return NotFound($"Workout was not found");
             }
         }
 
@@ -66,7 +66,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (ValidationException ex)
             {
-                return BadRequest($"Validation error: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -80,7 +80,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (ValidationException ex)
             {
-                return BadRequest($"Validation error: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -94,7 +94,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (NotFoundException)
             {
-                return NotFound($"Workout with the Id: {id} was not found");
+                return NotFound($"Workout was not found");
             }
         }
     }

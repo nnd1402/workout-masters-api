@@ -40,10 +40,22 @@ namespace WorkoutTracker.Domain.Services
 
         public WorkoutOutputDTO Add(WorkoutInputDTO workoutDTO)
         {
+            if (string.IsNullOrEmpty(workoutDTO.Title))
+            {
+                throw new ValidationException("Title is required");
+            }
+
+            DateTime? dateTime = workoutDTO.Date;
+
+            if (!dateTime.HasValue)
+            {
+                throw new ValidationException("Date is required");
+            }
+
             workoutDTO.Date = workoutDTO.Date.ToLocalTime();
             var dtoToEntity = new Workout(workoutDTO);
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            dtoToEntity.AppUserId = userId;    
+            dtoToEntity.AppUserId = userId;
             var workoutEntity = _workoutRepository.Add(dtoToEntity);
             _workoutRepository.Save();
             var result = workoutEntity.ConvertToDTO();
@@ -52,6 +64,17 @@ namespace WorkoutTracker.Domain.Services
 
         public void Update(Guid id, WorkoutInputDTO workoutDTO)
         {
+            if (string.IsNullOrEmpty(workoutDTO.Title))
+            {
+                throw new ValidationException("Title is required");
+            }
+
+            DateTime? dateTime = workoutDTO.Date;
+
+            if (!dateTime.HasValue)
+            {
+                throw new ValidationException("Date is required");
+            }
             workoutDTO.Date = workoutDTO.Date.ToLocalTime();
             var dtoToEntity = new Workout(workoutDTO);
             dtoToEntity.Id = id;
@@ -77,13 +100,13 @@ namespace WorkoutTracker.Domain.Services
             var result = new List<WorkoutOutputDTO>();
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var workouts = _workoutRepository.GetAll();
-            
-            foreach(var workout in workouts)
+
+            foreach (var workout in workouts)
             {
-                if(workout.AppUserId == userId)
+                if (workout.AppUserId == userId)
                 {
                     var workoutDTO = workout.ConvertToDTO();
-                    result.Add(workoutDTO);            
+                    result.Add(workoutDTO);
                 }
             }
             return result;
