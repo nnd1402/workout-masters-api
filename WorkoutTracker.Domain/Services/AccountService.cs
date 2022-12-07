@@ -101,11 +101,7 @@ namespace WorkoutTracker.Domain.Services
 
             if (user.EmailConfirmed == false)
             {
-                string newToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                string tokenHtmlVersion = HttpUtility.UrlEncode(newToken);
-                string confirmationLink = $"http://localhost:3000/account-confirmation?Email={user.Email}&token={tokenHtmlVersion}";
-                _emailService.SendEmail(user.Email, confirmationLink);
-                throw new ValidationException("Email must be confirmed first! New confirmation email has been sent to your email address.");
+                throw new ValidationException("Your account must be confirmed first! Check your email inbox to find your confirmation link");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, userDto.Password, false);
@@ -121,7 +117,9 @@ namespace WorkoutTracker.Domain.Services
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
+            {
                 return null;
+            }
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
 
