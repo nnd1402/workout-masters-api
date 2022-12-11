@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Web;
 using WorkoutTracker.API.Services;
+using WorkoutTracker.Domain.DTO.UserDTO;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
 using WorkoutTracker.Domain.Services.Interfaces;
@@ -128,6 +129,36 @@ namespace WorkoutTracker.Domain.Services
                 return CreateUserObject(user);
             }
             return null;
+        }
+
+        public async Task<bool> SendNewConfirmationEmail(SendEmailDTO sendEmailDTO)
+        {
+            if (string.IsNullOrEmpty(sendEmailDTO.UserName))
+            {
+                throw new ValidationException("Please fill the empty field");
+            }
+
+            var emailMatch = Regex.Match(sendEmailDTO.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+            if (!emailMatch.Success)
+            {
+                throw new ValidationException("Invalid email address");
+            }
+
+            var user = await _userManager.FindByEmailAsync(sendEmailDTO.UserName);
+            if (user == null)
+            {
+                throw new ValidationException("User with this email address doesn't exist.");
+            }
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            string tokenHtmlVersion = HttpUtility.UrlEncode(token);
+            string confirmationLink = $"http://localhost:3000/account-confirmation?Email={user.Email}&token={tokenHtmlVersion}";
+            _emailService.SendEmail(user.Email, confirmationLink);
+            return true;
+        }
+
+        public void SendBla(string email)
+        {
+
         }
 
         public async Task<UserOutputDTO> GetCurrentUser(string email)

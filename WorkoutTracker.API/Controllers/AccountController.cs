@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Web;
 using WorkoutTracker.Domain;
+using WorkoutTracker.Domain.DTO.UserDTO;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Services.Interfaces;
 
@@ -57,6 +58,19 @@ namespace WorkoutTracker.API.Controllers
             try
             {
                 return Ok(await _accountService.Login(userDto));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SendNewConfirmationEmail([FromBody] SendEmailDTO sendEmailDTO)
+        {
+            try
+            {
+                return Ok(await _accountService.SendNewConfirmationEmail(sendEmailDTO));
             }
             catch (Exception ex)
             {

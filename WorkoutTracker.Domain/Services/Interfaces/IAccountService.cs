@@ -1,4 +1,5 @@
-﻿using WorkoutTracker.Domain.DTO.UserDTOs;
+﻿using WorkoutTracker.Domain.DTO.UserDTO;
+using WorkoutTracker.Domain.DTO.UserDTOs;
 
 namespace WorkoutTracker.Domain.Services.Interfaces
 {
@@ -9,5 +10,7 @@ namespace WorkoutTracker.Domain.Services.Interfaces
         Task<UserOutputDTO?> ConfirmEmail(string token, string email);
         Task<UserOutputDTO?> GetCurrentUser(string email);
         UserOutputDTO CreateUserObject(AppUser user);
+
+        Task<bool> SendNewConfirmationEmail(SendEmailDTO sendEmailDTO);
     }
 }
