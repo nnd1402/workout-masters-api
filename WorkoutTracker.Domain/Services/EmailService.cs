@@ -24,7 +24,7 @@ namespace WorkoutTracker.Domain.Services
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_configuration.GetSection("EmailUsername").Value));
             email.To.Add(MailboxAddress.Parse(userEmail));
-            email.Subject = "Confirm your account";
+            email.Subject = "Verify your account";
             email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
 
             using (var smtp = new SmtpClient())
