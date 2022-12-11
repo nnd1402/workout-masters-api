@@ -20,6 +20,8 @@ namespace WorkoutTracker.Domain.Extensions
             .AddSignInManager<SignInManager<AppUser>>()
             .AddDefaultTokenProviders();
 
+            services.Configure<DataProtectionTokenProviderOptions>(opt => opt.TokenLifespan = TimeSpan.FromHours(2));
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

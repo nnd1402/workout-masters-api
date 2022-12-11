@@ -10,7 +10,8 @@ namespace WorkoutTracker.Domain.Services.Interfaces
         Task<UserOutputDTO?> ConfirmEmail(string token, string email);
         Task<UserOutputDTO?> GetCurrentUser(string email);
         UserOutputDTO CreateUserObject(AppUser user);
-
         Task<bool> SendNewConfirmationEmail(SendEmailDTO sendEmailDTO);
+        Task<bool> ForgotPassword(SendEmailDTO sendEmailDTO);
+        Task<bool> ResetPassword(ResetPasswordDTO resetPasswordDTO);
     }
 }

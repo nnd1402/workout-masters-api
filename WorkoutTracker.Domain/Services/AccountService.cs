@@ -61,7 +61,7 @@ namespace WorkoutTracker.Domain.Services
                 string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 string tokenHtmlVersion = HttpUtility.UrlEncode(token);
                 string confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
-                _emailService.SendEmail(newUser.Email, confirmationLink);
+                _emailService.SendVerifyAccountEmail(newUser.Email, confirmationLink);
                 return CreateUserObject(newUser);
             }
             return null;
@@ -152,13 +152,55 @@ namespace WorkoutTracker.Domain.Services
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             string tokenHtmlVersion = HttpUtility.UrlEncode(token);
             string confirmationLink = $"http://localhost:3000/account-confirmation?Email={user.Email}&token={tokenHtmlVersion}";
-            _emailService.SendEmail(user.Email, confirmationLink);
+            _emailService.SendVerifyAccountEmail(user.Email, confirmationLink);
+            return true;
+        }
+        public async Task<bool> ForgotPassword(SendEmailDTO sendEmailDTO)
+        {
+            if (string.IsNullOrEmpty(sendEmailDTO.UserName))
+            {
+                throw new ValidationException("Please fill the empty field");
+            }
+
+            var emailMatch = Regex.Match(sendEmailDTO.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+            if (!emailMatch.Success)
+            {
+                throw new ValidationException("Invalid email address");
+            }
+
+            var user = await _userManager.FindByEmailAsync(sendEmailDTO.UserName);
+            if (user == null)
+            {
+                throw new ValidationException("User with this email address doesn't exist.");
+            }
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string tokenHtmlVersion = HttpUtility.UrlEncode(token);
+            string resetPasswordLink = $"http://localhost:3000/reset-password?Email={user.Email}&token={tokenHtmlVersion}";
+            _emailService.SendForgotPasswordEmail(user.Email, resetPasswordLink);
             return true;
         }
 
-        public void SendBla(string email)
+        public async Task<bool> ResetPassword(ResetPasswordDTO resetPasswordDTO)
         {
+            var passwordMatch = Regex.Match(resetPasswordDTO.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
+            if (!passwordMatch.Success)
+            {
+                throw new ValidationException("Invalid password");
+            }
 
+            var user = await _userManager.FindByEmailAsync(resetPasswordDTO.UserName);
+            if (user == null)
+            {
+                throw new ValidationException("User with this email address doesn't exist.");
+            }
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordDTO.Token, resetPasswordDTO.Password);
+
+            if (!resetPassResult.Succeeded)
+            {
+                throw new ValidationException("Reseting password was not successfull");
+            }
+            return true;
         }
 
         public async Task<UserOutputDTO> GetCurrentUser(string email)

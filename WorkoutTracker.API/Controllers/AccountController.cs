@@ -78,6 +78,32 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult> ForgotPassword([FromBody] SendEmailDTO sendEmailDTO)
+        {
+            try
+            {
+                return Ok(await _accountService.ForgotPassword(sendEmailDTO));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
+        {
+            try
+            {
+                return Ok(await _accountService.ResetPassword(resetPasswordDTO));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [Authorize]
         [HttpGet("current")]
         public async Task<ActionResult<UserInputDTO>> GetCurrentUser()
