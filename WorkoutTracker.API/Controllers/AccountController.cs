@@ -29,7 +29,16 @@ namespace WorkoutTracker.API.Controllers
         {
             try
             {
-                return Ok(await _accountService.Register(userDto));
+                // return Ok(await _accountService.Register(userDto));
+                var registerResult = await _accountService.Register(userDto);
+                if (registerResult != null)
+                {
+                    return Ok(registerResult);
+                }
+                else
+                {
+                    return BadRequest("O NEEE JEBIGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                }
             }
             catch (Exception ex)
             {
