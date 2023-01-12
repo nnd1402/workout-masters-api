@@ -10,9 +10,9 @@ using WorkoutTracker.Domain.Repositories.Interfaces;
 
 namespace WorkoutTracker.Domain.Repositories
 {
-    public class LogsRepository : GenericRepository<Logs>, ILogsRepository
+    public class LogRepository : GenericRepository<Log>, ILogRepository
     {
-        public LogsRepository(WorkoutDbContext context) : base(context)
+        public LogRepository(WorkoutDbContext context) : base(context)
         {
         }
     }

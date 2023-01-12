@@ -2,6 +2,7 @@
 using WorkoutTracker.API.Data;
 using WorkoutTracker.API.Repository;
 using WorkoutTracker.Domain.Extensions;
+using WorkoutTracker.Domain.Repositories;
 using WorkoutTracker.Domain.Repositories.Interfaces;
 using WorkoutTracker.Domain.Services;
 using WorkoutTracker.Domain.Services.Interfaces;
@@ -25,6 +26,8 @@ namespace WorkoutTracker.API.Extensions
                 services.AddTransient<IEmailService, EmailService>();
                 services.AddTransient<IWorkoutService, WorkoutService>();
                 services.AddTransient<IAccountService, AccountService>();
+                services.AddTransient<ILogRepository, LogRepository>();
+                services.AddTransient<ILogService, LogService>();
                 services.AddIdentityServices(config);
             }
             return services;

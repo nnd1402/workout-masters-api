@@ -8,7 +8,7 @@ using WorkoutTracker.Domain.Models;
 
 namespace WorkoutTracker.Domain.Repositories.Interfaces
 {
-    public interface ILogsRepository : IGenericRepository<Logs>
+    public interface ILogRepository : IGenericRepository<Log>
     {
 
     }

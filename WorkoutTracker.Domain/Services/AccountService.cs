@@ -7,6 +7,7 @@ using WorkoutTracker.Domain.DTO.UserDTO;
 using WorkoutTracker.Domain.DTO.UserDTOs;
 using WorkoutTracker.Domain.Exceptions;
 using WorkoutTracker.Domain.Models;
+using WorkoutTracker.Domain.Repositories.Interfaces;
 using WorkoutTracker.Domain.Services.Interfaces;
 
 namespace WorkoutTracker.Domain.Services
@@ -17,25 +18,25 @@ namespace WorkoutTracker.Domain.Services
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
         private readonly IEmailService _emailService;
+        private readonly ILogService _logService;
 
         public AccountService(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             TokenService tokenService,
-            IEmailService emailService)
+            IEmailService emailService,
+            ILogService logService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _emailService = emailService;
+            _logService = logService;
         }
 
         public async Task<UserOutputDTO?> Register(UserInputDTO userDto)
         {
-            Logs log = new Logs();
-            log.Time = DateTime.Now.ToString();
-            log.Id = Guid.NewGuid().ToString();
-            log.Message = "usli smo u register";
+            _logService.Create("register started");
 
             if (await _userManager.Users.AnyAsync(x => x.UserName == userDto.UserName) && await _userManager.Users.AnyAsync(x => x.Email == userDto.UserName))
             {

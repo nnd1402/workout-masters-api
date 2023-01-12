@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WorkoutTracker.Domain.Models
 {
-    public class Logs
+    public class Log
     {
         public string Id { get; set; }
         public string Time { get; set; }
