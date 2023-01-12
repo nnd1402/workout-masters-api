@@ -20,8 +20,8 @@ namespace WorkoutTracker.Domain.Services
             log.Time = DateTime.Now.ToString();
             log.Id = Guid.NewGuid().ToString();
             log.Message = message;
-            _logsRepository.Add(log);
-            _logsRepository.Save();
+            _logRepository.Add(log);
+            _logRepository.Save();
         }
     }
 }
