@@ -26,7 +26,8 @@ namespace WorkoutTracker.Domain.Services
 
             var filePath = Path.Combine(outPutDirectory, _configuration.GetSection("VerifyAccountEmailTemplatePath").Value);
 
-            string relativePath = new Uri(filePath).LocalPath;
+            string relativePath = Path.GetRelativePath(outPutDirectory, filePath);
+            Console.WriteLine(relativePath);
 
             string messageBody = ReadEmailTemplate(relativePath);
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);

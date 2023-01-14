@@ -66,10 +66,12 @@ namespace WorkoutTracker.Domain.Services
             var res = await _userManager.CreateAsync(newUser, userDto.Password);
             if (res.Succeeded)
             {
+                _logService.Create("user created");
                 string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 string tokenHtmlVersion = HttpUtility.UrlEncode(token);
                 string confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
                 _emailService.SendVerifyAccountEmail(newUser.Email, confirmationLink);
+                _logService.Create("email sent");
                 return CreateUserObject(newUser);
             }
             return null;
