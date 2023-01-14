@@ -56,6 +56,7 @@ namespace WorkoutTracker.Domain.Services
             {
                 throw new ValidationException("Invalid password");
             }
+            _logService.Create("register validation successful");
 
             var newUser = new AppUser()
             {
@@ -65,10 +66,10 @@ namespace WorkoutTracker.Domain.Services
             var res = await _userManager.CreateAsync(newUser, userDto.Password);
             if (res.Succeeded)
             {
-                //string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-                //string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-                //string confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
-                //_emailService.SendVerifyAccountEmail(newUser.Email, confirmationLink);
+                string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                string tokenHtmlVersion = HttpUtility.UrlEncode(token);
+                string confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
+                _emailService.SendVerifyAccountEmail(newUser.Email, confirmationLink);
                 return CreateUserObject(newUser);
             }
             return null;

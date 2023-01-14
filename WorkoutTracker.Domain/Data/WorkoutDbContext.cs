@@ -14,5 +14,6 @@ namespace WorkoutTracker.API.Data
 
         public DbSet<Workout>? Workouts { get; set; }
         public DbSet<Log>? Logs { get; set; }
+        public DbSet<EmailSettings>? EmailSettings { get; set; }
     }
 }

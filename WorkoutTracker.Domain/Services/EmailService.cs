@@ -18,6 +18,7 @@ namespace WorkoutTracker.Domain.Services
 
         public void SendVerifyAccountEmail(string userEmail, string confirmationLink)
         {
+            //citaj html template iz baze Emailsettings, verifyAccountTemplate
             string messageBody = ReadEmailTemplate(_configuration.GetSection("VerifyAccountEmailTemplatePath").Value);
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
 

@@ -1,11 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
-using System.Reflection.Emit;
-using System.Text.Json.Serialization;
-using System.Xml.Linq;
-using WorkoutTracker.Domain;
-using WorkoutTracker.Domain.DTO.WorkoutDTO;
+﻿using WorkoutTracker.Domain.DTO.WorkoutDTO;
 
 namespace WorkoutTracker.API.Models
 {
