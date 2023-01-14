@@ -3,7 +3,7 @@
     public class EmailSettings
     {
         public string Id { get; set; }
-        public string verifyAccountTemplate { get; set; }
-        public string forgotPasswordTemplate { get; set; }
+        public string VerifyAccountTemplate { get; set; }
+        public string ForgotPasswordTemplate { get; set; }
     }
 }

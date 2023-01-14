@@ -4,22 +4,31 @@ using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
 using WorkoutTracker.Domain.Services.Interfaces;
+using System.Reflection;
 
 namespace WorkoutTracker.Domain.Services
 {
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
-        public EmailService(IConfiguration configuration)
+        private readonly ILogService _logService;
+        public EmailService(IConfiguration configuration, ILogService logService)
         {
             _configuration = configuration;
+            _logService = logService;
         }
 
 
         public void SendVerifyAccountEmail(string userEmail, string confirmationLink)
         {
-            //citaj html template iz baze Emailsettings, verifyAccountTemplate
-            string messageBody = ReadEmailTemplate(_configuration.GetSection("VerifyAccountEmailTemplatePath").Value);
+            _logService.Create("Entered SendVerifyAccountEmail");
+            var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+
+            var filePath = Path.Combine(outPutDirectory, _configuration.GetSection("VerifyAccountEmailTemplatePath").Value);
+
+            string relativePath = new Uri(filePath).LocalPath;
+
+            string messageBody = ReadEmailTemplate(relativePath);
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
 
             var email = new MimeMessage();
@@ -35,6 +44,7 @@ namespace WorkoutTracker.Domain.Services
                 smtp.Send(email);
                 smtp.Disconnect(true);
             }
+            _logService.Create("Sending complete");
         }
 
         public void SendForgotPasswordEmail(string userEmail, string resetPasswordLink)
