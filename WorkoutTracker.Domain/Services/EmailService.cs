@@ -22,14 +22,14 @@ namespace WorkoutTracker.Domain.Services
         public void SendVerifyAccountEmail(string userEmail, string confirmationLink)
         {
             _logService.Create("Entered SendVerifyAccountEmail");
-            var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+            //var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
 
-            var filePath = Path.Combine(outPutDirectory, _configuration.GetSection("VerifyAccountEmailTemplatePath").Value);
+            //var filePath = Path.Combine(outPutDirectory, _configuration.GetSection("VerifyAccountEmailTemplatePath").Value);
 
-            string relativePath = Path.GetRelativePath(outPutDirectory, filePath);
-            Console.WriteLine(relativePath);
+            //string relativePath = Path.GetRelativePath(outPutDirectory, filePath);
+            //Console.WriteLine(relativePath);
 
-            string messageBody = ReadEmailTemplate(relativePath);
+            string messageBody = Properties.Resources.VerifyAccountEmailTemplate;
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
 
             var email = new MimeMessage();
