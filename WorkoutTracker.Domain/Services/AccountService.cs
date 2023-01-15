@@ -69,7 +69,7 @@ namespace WorkoutTracker.Domain.Services
                 _logService.Create("user created");
                 string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-                string confirmationLink = $"http://localhost:3000/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
+                string confirmationLink = $"https://www.workoutmasters.pro/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
                 _emailService.SendVerifyAccountEmail(newUser.Email, confirmationLink);
                 _logService.Create("email sent");
                 return CreateUserObject(newUser);
@@ -161,7 +161,7 @@ namespace WorkoutTracker.Domain.Services
             }
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-            string confirmationLink = $"http://localhost:3000/account-confirmation?Email={user.Email}&token={tokenHtmlVersion}";
+            string confirmationLink = $"https://www.workoutmasters.pro/account-confirmation?Email={user.Email}&token={tokenHtmlVersion}";
             _emailService.SendVerifyAccountEmail(user.Email, confirmationLink);
             return true;
         }
@@ -185,7 +185,7 @@ namespace WorkoutTracker.Domain.Services
             }
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
             string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-            string resetPasswordLink = $"http://localhost:3000/reset-password?Email={user.Email}&token={tokenHtmlVersion}";
+            string resetPasswordLink = $"https://www.workoutmasters.pro/reset-password?Email={user.Email}&token={tokenHtmlVersion}";
             _emailService.SendForgotPasswordEmail(user.Email, resetPasswordLink);
             return true;
         }
@@ -208,7 +208,7 @@ namespace WorkoutTracker.Domain.Services
 
             if (!resetPassResult.Succeeded)
             {
-                throw new ValidationException("Reseting password was not successfull");
+                throw new ValidationException("Reseting password was not successful");
             }
             return true;
         }

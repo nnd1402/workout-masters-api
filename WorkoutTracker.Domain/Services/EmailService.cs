@@ -10,38 +10,37 @@ namespace WorkoutTracker.Domain.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly IConfiguration _configuration;
+        //private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
         public EmailService(IConfiguration configuration, ILogService logService)
         {
-            _configuration = configuration;
+            // _configuration = configuration;
             _logService = logService;
         }
-
 
         public void SendVerifyAccountEmail(string userEmail, string confirmationLink)
         {
             _logService.Create("Entered SendVerifyAccountEmail");
-            //var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-
-            //var filePath = Path.Combine(outPutDirectory, _configuration.GetSection("VerifyAccountEmailTemplatePath").Value);
-
-            //string relativePath = Path.GetRelativePath(outPutDirectory, filePath);
-            //Console.WriteLine(relativePath);
 
             string messageBody = Properties.Resources.VerifyAccountEmailTemplate;
+            Console.WriteLine(messageBody);
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
 
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_configuration.GetSection("EmailUsername").Value));
+            email.From.Add(MailboxAddress.Parse(Properties.Resources.EmailUsername));
             email.To.Add(MailboxAddress.Parse(userEmail));
             email.Subject = "Verify your account";
-            email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = updatedMessageBody;
+            bodyBuilder.TextBody = updatedMessageBody;
+            email.Body = bodyBuilder.ToMessageBody();
+            //email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
+            _logService.Create("Email composed");
 
             using (var smtp = new SmtpClient())
             {
-                smtp.Connect(_configuration.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_configuration.GetSection("EmailUsername").Value, _configuration.GetSection("EmailPassword").Value);
+                smtp.Connect(Properties.Resources.EmailHost, 587, SecureSocketOptions.StartTls);
+                smtp.Authenticate(Properties.Resources.EmailUsername, Properties.Resources.EmailPassword);
                 smtp.Send(email);
                 smtp.Disconnect(true);
             }
@@ -50,30 +49,30 @@ namespace WorkoutTracker.Domain.Services
 
         public void SendForgotPasswordEmail(string userEmail, string resetPasswordLink)
         {
-            string messageBody = ReadEmailTemplate(_configuration.GetSection("ForgotPasswordEmailTemplatePath").Value);
+            string messageBody = Properties.Resources.ForgotPasswordEmailTemplate;
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#resetPasswordLink", resetPasswordLink);
 
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_configuration.GetSection("EmailUsername").Value));
+            email.From.Add(MailboxAddress.Parse(Properties.Resources.EmailUsername));
             email.To.Add(MailboxAddress.Parse(userEmail));
             email.Subject = "Reset Password";
             email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
 
             using (var smtp = new SmtpClient())
             {
-                smtp.Connect(_configuration.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_configuration.GetSection("EmailUsername").Value, _configuration.GetSection("EmailPassword").Value);
+                smtp.Connect(Properties.Resources.EmailHost, 587, SecureSocketOptions.StartTls);
+                smtp.Authenticate(Properties.Resources.EmailUsername, Properties.Resources.EmailPassword);
                 smtp.Send(email);
                 smtp.Disconnect(true);
             }
         }
 
-        private string ReadEmailTemplate(string templatePath)
-        {
-            StreamReader reader = new StreamReader(templatePath);
-            string result = reader.ReadToEnd();
-            reader.Close();
-            return result;
-        }
+        //private string ReadEmailTemplate(string templatePath)
+        //{
+        //    StreamReader reader = new StreamReader(templatePath);
+        //    string result = reader.ReadToEnd();
+        //    reader.Close();
+        //    return result;
+        //}
     }
 }

@@ -61,6 +61,33 @@ namespace WorkoutTracker.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to smtp.gmail.com.
+        /// </summary>
+        public static string EmailHost {
+            get {
+                return ResourceManager.GetString("EmailHost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to rlskdwrrrlpmoqyg.
+        /// </summary>
+        public static string EmailPassword {
+            get {
+                return ResourceManager.GetString("EmailPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to workout.masters.info@gmail.com.
+        /// </summary>
+        public static string EmailUsername {
+            get {
+                return ResourceManager.GetString("EmailUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html&gt;
         ///	&lt;head&gt;

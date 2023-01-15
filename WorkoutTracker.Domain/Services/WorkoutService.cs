@@ -12,11 +12,13 @@ namespace WorkoutTracker.Domain.Services
     {
         private readonly IWorkoutRepository _workoutRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogService _logService;
 
-        public WorkoutService(IWorkoutRepository workoutRepository, IHttpContextAccessor httpContextAccessor)
+        public WorkoutService(IWorkoutRepository workoutRepository, IHttpContextAccessor httpContextAccessor, ILogService logService)
         {
             _workoutRepository = workoutRepository;
             _httpContextAccessor = httpContextAccessor;
+            _logService = logService;
         }
 
         public IEnumerable<WorkoutOutputDTO> GetAll()
@@ -52,6 +54,7 @@ namespace WorkoutTracker.Domain.Services
                 throw new ValidationException("Date is required");
             }
 
+            _logService.Create("Passed workout validation");
             workoutDTO.Date = workoutDTO.Date.ToLocalTime();
             var dtoToEntity = new Workout(workoutDTO);
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
