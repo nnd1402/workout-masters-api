@@ -1,4 +1,4 @@
-# workout-tracker-api
+# Workout Masters API
 
 ## Setting Up
 
