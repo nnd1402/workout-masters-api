@@ -79,6 +79,7 @@ namespace WorkoutMasters.Domain.Services
 
         public async Task<UserOutputDTO?> Login(UserInputDTO userDto)
         {
+            _logService.Create("login started");
             if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
             {
                 throw new ValidationException("Please fill in all fields!");
