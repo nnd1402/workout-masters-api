@@ -21,14 +21,6 @@ namespace WorkoutMasters.Domain.Services
             _logService = logService;
         }
 
-        public IEnumerable<WorkoutOutputDTO> GetAll()
-        {
-            var workouts = _workoutRepository.GetAll();
-            var workoutsDTO = workouts.ToList().ConvertAll(e => e.ConvertToDTO());
-            _workoutRepository.Save();
-            return workoutsDTO;
-        }
-
         public WorkoutOutputDTO GetById(Guid id)
         {
             var workout = _workoutRepository.GetById(id);

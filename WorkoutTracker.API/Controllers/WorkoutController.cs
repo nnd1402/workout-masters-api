@@ -17,20 +17,6 @@ namespace WorkoutMasters.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult List()
-        {
-            try
-            {
-                return Ok(_workoutService.GetAll());
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
-            }
-        }
-
-        [HttpGet]
         public ActionResult ListByUser()
         {
             try
