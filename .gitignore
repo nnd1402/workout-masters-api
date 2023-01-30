@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /WorkoutTracker.API/appsettings.Development.json
 /WorkoutTracker.API/appsettings.json
 /WorkoutTracker.API/appsettings.json
+/WorkoutTracker.Domain/Properties/Resources.resx
