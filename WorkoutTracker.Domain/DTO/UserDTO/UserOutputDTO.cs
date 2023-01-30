@@ -1,4 +1,4 @@
-﻿namespace WorkoutTracker.Domain.DTO.UserDTOs
+﻿namespace WorkoutMasters.Domain.DTO.UserDTOs
 {
     public class UserOutputDTO
     {

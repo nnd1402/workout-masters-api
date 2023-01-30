@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkoutTracker.Domain.DTO.UserDTOs
+namespace WorkoutMasters.Domain.DTO.UserDTOs
 {
     public class UserInputDTO
     {

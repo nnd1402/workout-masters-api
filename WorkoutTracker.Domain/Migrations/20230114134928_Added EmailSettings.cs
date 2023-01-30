@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace WorkoutTracker.Domain.Migrations
+namespace WorkoutMasters.Domain.Migrations
 {
     public partial class AddedEmailSettings : Migration
     {

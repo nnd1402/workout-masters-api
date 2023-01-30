@@ -1,9 +1,9 @@
-﻿using WorkoutTracker.Domain.Models;
-using WorkoutTracker.Domain.Repositories;
-using WorkoutTracker.Domain.Repositories.Interfaces;
-using WorkoutTracker.Domain.Services.Interfaces;
+﻿using WorkoutMasters.Domain.Models;
+using WorkoutMasters.Domain.Repositories;
+using WorkoutMasters.Domain.Repositories.Interfaces;
+using WorkoutMasters.Domain.Services.Interfaces;
 
-namespace WorkoutTracker.Domain.Services
+namespace WorkoutMasters.Domain.Services
 {
     public class LogService : ILogService
     {

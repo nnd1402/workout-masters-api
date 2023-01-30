@@ -3,9 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WorkoutTracker.Domain;
+using WorkoutMasters.Domain;
 
-namespace WorkoutTracker.API.Services
+namespace WorkoutMasters.API.Services
 {
     public class TokenService
     {

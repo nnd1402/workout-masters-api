@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using WorkoutTracker.API.Data;
-using WorkoutTracker.API.Services;
+using WorkoutMasters.API.Data;
+using WorkoutMasters.API.Services;
 
-namespace WorkoutTracker.Domain.Extensions
+namespace WorkoutMasters.Domain.Extensions
 {
     public static class IdentityServiceExtensions
     {

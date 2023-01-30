@@ -2,15 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Web;
-using WorkoutTracker.API.Services;
-using WorkoutTracker.Domain.DTO.UserDTO;
-using WorkoutTracker.Domain.DTO.UserDTOs;
-using WorkoutTracker.Domain.Exceptions;
-using WorkoutTracker.Domain.Models;
-using WorkoutTracker.Domain.Repositories.Interfaces;
-using WorkoutTracker.Domain.Services.Interfaces;
+using WorkoutMasters.API.Services;
+using WorkoutMasters.Domain.DTO.UserDTO;
+using WorkoutMasters.Domain.DTO.UserDTOs;
+using WorkoutMasters.Domain.Exceptions;
+using WorkoutMasters.Domain.Models;
+using WorkoutMasters.Domain.Repositories.Interfaces;
+using WorkoutMasters.Domain.Services.Interfaces;
 
-namespace WorkoutTracker.Domain.Services
+namespace WorkoutMasters.Domain.Services
 {
     public class AccountService : IAccountService
     {

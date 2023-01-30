@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.API", "WorkoutTracker.API\WorkoutTracker.API.csproj", "{462E2D90-260E-4A46-9EA5-E077AD2CEEAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutMasters.API", "WorkoutTracker.API\WorkoutMasters.API.csproj", "{462E2D90-260E-4A46-9EA5-E077AD2CEEAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Domain", "WorkoutTracker.Domain\WorkoutTracker.Domain.csproj", "{5E361026-F74A-446F-851D-33E501D79AB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutMasters.Domain", "WorkoutTracker.Domain\WorkoutMasters.Domain.csproj", "{5E361026-F74A-446F-851D-33E501D79AB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

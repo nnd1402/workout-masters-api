@@ -1,4 +1,4 @@
-﻿namespace WorkoutTracker.Domain.Models
+﻿namespace WorkoutMasters.Domain.Models
 {
     public class Log
     {

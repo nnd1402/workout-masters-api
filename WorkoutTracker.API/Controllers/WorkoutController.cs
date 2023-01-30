@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkoutTracker.API.Models;
-using WorkoutTracker.Domain.DTO.WorkoutDTO;
-using WorkoutTracker.Domain.Exceptions;
-using WorkoutTracker.Domain.Services.Interfaces;
+using WorkoutMasters.API.Models;
+using WorkoutMasters.Domain.DTO.WorkoutDTO;
+using WorkoutMasters.Domain.Exceptions;
+using WorkoutMasters.Domain.Services.Interfaces;
 
-namespace WorkoutTracker.API.Controllers
+namespace WorkoutMasters.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]

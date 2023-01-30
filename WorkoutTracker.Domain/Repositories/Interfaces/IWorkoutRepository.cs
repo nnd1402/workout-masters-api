@@ -1,6 +1,6 @@
-﻿using WorkoutTracker.API.Models;
+﻿using WorkoutMasters.API.Models;
 
-namespace WorkoutTracker.Domain.Repositories.Interfaces
+namespace WorkoutMasters.Domain.Repositories.Interfaces
 {
     public interface IWorkoutRepository : IGenericRepository<Workout>
     {

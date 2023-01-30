@@ -1,6 +1,6 @@
-﻿using WorkoutTracker.Domain.DTO.WorkoutDTO;
+﻿using WorkoutMasters.Domain.DTO.WorkoutDTO;
 
-namespace WorkoutTracker.Domain.Services.Interfaces
+namespace WorkoutMasters.Domain.Services.Interfaces
 {
     public interface IWorkoutService
     {

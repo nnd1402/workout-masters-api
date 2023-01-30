@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkoutTracker.Domain.DTO.UserDTO
+namespace WorkoutMasters.Domain.DTO.UserDTO
 {
     public class ResetPasswordDTO
     {

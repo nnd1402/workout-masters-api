@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using WorkoutTracker.API.Extensions;
+using WorkoutMasters.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

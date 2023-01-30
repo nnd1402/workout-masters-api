@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "WorkoutTracker.API": {
+    "WorkoutMasters.API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

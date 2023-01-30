@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Web;
-using WorkoutTracker.Domain;
-using WorkoutTracker.Domain.DTO.UserDTO;
-using WorkoutTracker.Domain.DTO.UserDTOs;
-using WorkoutTracker.Domain.Services.Interfaces;
+using WorkoutMasters.Domain;
+using WorkoutMasters.Domain.DTO.UserDTO;
+using WorkoutMasters.Domain.DTO.UserDTOs;
+using WorkoutMasters.Domain.Services.Interfaces;
 
-namespace WorkoutTracker.API.Controllers
+namespace WorkoutMasters.API.Controllers
 {
     [AllowAnonymous]
     [Route("api/[controller]/[action]")]

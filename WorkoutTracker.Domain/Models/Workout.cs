@@ -1,6 +1,6 @@
-﻿using WorkoutTracker.Domain.DTO.WorkoutDTO;
+﻿using WorkoutMasters.Domain.DTO.WorkoutDTO;
 
-namespace WorkoutTracker.API.Models
+namespace WorkoutMasters.API.Models
 {
     public class Workout
     {

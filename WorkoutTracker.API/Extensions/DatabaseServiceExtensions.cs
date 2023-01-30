@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkoutTracker.API.Data;
-using WorkoutTracker.API.Repository;
-using WorkoutTracker.Domain.Extensions;
-using WorkoutTracker.Domain.Repositories;
-using WorkoutTracker.Domain.Repositories.Interfaces;
-using WorkoutTracker.Domain.Services;
-using WorkoutTracker.Domain.Services.Interfaces;
+using WorkoutMasters.API.Data;
+using WorkoutMasters.API.Repository;
+using WorkoutMasters.Domain.Extensions;
+using WorkoutMasters.Domain.Repositories;
+using WorkoutMasters.Domain.Repositories.Interfaces;
+using WorkoutMasters.Domain.Services;
+using WorkoutMasters.Domain.Services.Interfaces;
 
-namespace WorkoutTracker.API.Extensions
+namespace WorkoutMasters.API.Extensions
 {
     public static class DatabaseServiceExtensions
     {

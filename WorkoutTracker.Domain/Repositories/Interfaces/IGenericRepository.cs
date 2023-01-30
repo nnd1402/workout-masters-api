@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkoutTracker.Domain.Repositories.Interfaces
+namespace WorkoutMasters.Domain.Repositories.Interfaces
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {

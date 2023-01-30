@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using WorkoutTracker.API.Models;
-using WorkoutTracker.Domain.DTO.WorkoutDTO;
-using WorkoutTracker.Domain.Exceptions;
-using WorkoutTracker.Domain.Repositories.Interfaces;
-using WorkoutTracker.Domain.Services.Interfaces;
+using WorkoutMasters.API.Models;
+using WorkoutMasters.Domain.DTO.WorkoutDTO;
+using WorkoutMasters.Domain.Exceptions;
+using WorkoutMasters.Domain.Repositories.Interfaces;
+using WorkoutMasters.Domain.Services.Interfaces;
 
-namespace WorkoutTracker.Domain.Services
+namespace WorkoutMasters.Domain.Services
 {
     public class WorkoutService : IWorkoutService
     {

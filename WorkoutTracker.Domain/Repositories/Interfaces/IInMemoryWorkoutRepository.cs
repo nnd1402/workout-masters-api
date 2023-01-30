@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WorkoutTracker.API.Models;
+using WorkoutMasters.API.Models;
 
-namespace WorkoutTracker.Domain.Repositories.Interfaces
+namespace WorkoutMasters.Domain.Repositories.Interfaces
 {
     public interface IInMemoryWorkoutRepository
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkoutTracker.Domain.Services.Interfaces
+namespace WorkoutMasters.Domain.Services.Interfaces
 {
     public interface ILogService
     {

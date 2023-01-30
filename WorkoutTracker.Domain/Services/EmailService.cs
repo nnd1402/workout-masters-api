@@ -3,10 +3,10 @@ using Microsoft.Extensions.Configuration;
 using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
-using WorkoutTracker.Domain.Services.Interfaces;
+using WorkoutMasters.Domain.Services.Interfaces;
 using System.Reflection;
 
-namespace WorkoutTracker.Domain.Services
+namespace WorkoutMasters.Domain.Services
 {
     public class EmailService : IEmailService
     {

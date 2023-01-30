@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\WorkoutTracker.Domain\WorkoutTracker.Domain.csproj" />
+		<ProjectReference Include="..\WorkoutTracker.Domain\WorkoutMasters.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

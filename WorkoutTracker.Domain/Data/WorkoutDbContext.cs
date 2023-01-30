@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WorkoutTracker.API.Models;
-using WorkoutTracker.Domain;
-using WorkoutTracker.Domain.Models;
+using WorkoutMasters.API.Models;
+using WorkoutMasters.Domain;
+using WorkoutMasters.Domain.Models;
 
-namespace WorkoutTracker.API.Data
+namespace WorkoutMasters.API.Data
 {
     public class WorkoutDbContext : IdentityDbContext<AppUser>
     {

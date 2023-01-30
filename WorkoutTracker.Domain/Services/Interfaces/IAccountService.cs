@@ -1,7 +1,7 @@
-﻿using WorkoutTracker.Domain.DTO.UserDTO;
-using WorkoutTracker.Domain.DTO.UserDTOs;
+﻿using WorkoutMasters.Domain.DTO.UserDTO;
+using WorkoutMasters.Domain.DTO.UserDTOs;
 
-namespace WorkoutTracker.Domain.Services.Interfaces
+namespace WorkoutMasters.Domain.Services.Interfaces
 {
     public interface IAccountService
     {

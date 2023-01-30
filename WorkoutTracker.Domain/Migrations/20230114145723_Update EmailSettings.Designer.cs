@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WorkoutTracker.API.Data;
+using WorkoutMasters.API.Data;
 
 #nullable disable
 
-namespace WorkoutTracker.Domain.Migrations
+namespace WorkoutMasters.Domain.Migrations
 {
     [DbContext(typeof(WorkoutDbContext))]
     [Migration("20230114145723_Update EmailSettings")]

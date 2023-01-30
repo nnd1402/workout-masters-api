@@ -1,4 +1,4 @@
-﻿namespace WorkoutTracker.Domain.Exceptions
+﻿namespace WorkoutMasters.Domain.Exceptions
 {
     public class NotFoundException : Exception
     {

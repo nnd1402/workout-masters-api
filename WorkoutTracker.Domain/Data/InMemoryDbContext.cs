@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkoutTracker.API.Models;
+using WorkoutMasters.API.Models;
 
-namespace WorkoutTracker.API.Data
+namespace WorkoutMasters.API.Data
 {
     public class InMemoryDbContext : DbContext
     {

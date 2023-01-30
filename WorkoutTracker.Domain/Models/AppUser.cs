@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace WorkoutTracker.Domain
+namespace WorkoutMasters.Domain
 {
     public class AppUser : IdentityUser
     {
