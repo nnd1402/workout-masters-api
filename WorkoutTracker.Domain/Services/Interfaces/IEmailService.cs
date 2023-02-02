@@ -2,7 +2,7 @@
 {
     public interface IEmailService
     {
-        void SendVerifyAccountEmail(string email, string token);
-        void SendForgotPasswordEmail(string email, string token);
+        void VerifyAccountEmail(string email, string token);
+        void ForgotPasswordEmail(string email, string token);
     }
 }

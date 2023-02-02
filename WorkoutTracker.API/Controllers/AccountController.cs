@@ -6,6 +6,7 @@ using System.Web;
 using WorkoutMasters.Domain;
 using WorkoutMasters.Domain.DTO.UserDTO;
 using WorkoutMasters.Domain.DTO.UserDTOs;
+using WorkoutMasters.Domain.Services;
 using WorkoutMasters.Domain.Services.Interfaces;
 
 namespace WorkoutMasters.API.Controllers
@@ -17,19 +18,21 @@ namespace WorkoutMasters.API.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly UserManager<AppUser> _userManager;
-        public AccountController(IAccountService accountService, UserManager<AppUser> userManager, IEmailService emailService)
+        private readonly ILogService _logService;
+        public AccountController(IAccountService accountService, UserManager<AppUser> userManager, IEmailService emailService, ILogService logService)
         {
             _accountService = accountService;
             _userManager = userManager;
+            _logService = logService;
         }
 
-
         [HttpPost]
-        public async Task<ActionResult<UserOutputDTO>> Register([FromBody] UserInputDTO userDto)
+        public ActionResult<UserOutputDTO> Register([FromBody] UserInputDTO userDto)
         {
             try
             {
-                return Ok(await _accountService.Register(userDto));
+                _logService.Create("entered registration controller method");
+                return Ok(_accountService.Register(userDto));
             }
             catch (Exception ex)
             {
@@ -109,6 +112,12 @@ namespace WorkoutMasters.API.Controllers
         public async Task<ActionResult<UserInputDTO>> GetCurrentUser()
         {
             return Ok(await _accountService.GetCurrentUser(User.FindFirstValue(ClaimTypes.Email)));
+        }
+
+        [HttpGet]
+        public ActionResult Ping()
+        {
+            return Ok();
         }
     }
 }

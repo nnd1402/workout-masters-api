@@ -10,44 +10,28 @@ namespace WorkoutMasters.Domain.Services
 {
     public class EmailService : IEmailService
     {
-        //private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
         public EmailService(IConfiguration configuration, ILogService logService)
         {
-            // _configuration = configuration;
             _logService = logService;
         }
-
-        public void SendVerifyAccountEmail(string userEmail, string confirmationLink)
+        public void VerifyAccountEmail(string userEmail, string confirmationLink)
         {
-            _logService.Create("Entered SendVerifyAccountEmail");
-
             string messageBody = Properties.Resources.VerifyAccountEmailTemplate;
-            Console.WriteLine(messageBody);
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#confirmationLink", confirmationLink);
 
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(Properties.Resources.EmailUsername));
             email.To.Add(MailboxAddress.Parse(userEmail));
             email.Subject = "Verify your account";
-            var bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = updatedMessageBody;
-            bodyBuilder.TextBody = updatedMessageBody;
-            email.Body = bodyBuilder.ToMessageBody();
-            //email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
-            _logService.Create("Email composed");
+            email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
 
             using (var smtp = new SmtpClient())
             {
-                smtp.Connect(Properties.Resources.EmailHost, 587, SecureSocketOptions.StartTls);
-                smtp.Authenticate(Properties.Resources.EmailUsername, Properties.Resources.EmailPassword);
-                smtp.Send(email);
-                smtp.Disconnect(true);
+                SendEmail(email);
             }
-            _logService.Create("Sending complete");
         }
-
-        public void SendForgotPasswordEmail(string userEmail, string resetPasswordLink)
+        public void ForgotPasswordEmail(string userEmail, string resetPasswordLink)
         {
             string messageBody = Properties.Resources.ForgotPasswordEmailTemplate;
             var updatedMessageBody = messageBody.Replace("#name#", userEmail.Substring(0, userEmail.IndexOf("@"))).Replace("#resetPasswordLink", resetPasswordLink);
@@ -60,19 +44,18 @@ namespace WorkoutMasters.Domain.Services
 
             using (var smtp = new SmtpClient())
             {
+                SendEmail(email);
+            }
+        }
+        private void SendEmail(MimeMessage email)
+        {
+            using (var smtp = new SmtpClient())
+            {
                 smtp.Connect(Properties.Resources.EmailHost, 587, SecureSocketOptions.StartTls);
                 smtp.Authenticate(Properties.Resources.EmailUsername, Properties.Resources.EmailPassword);
                 smtp.Send(email);
                 smtp.Disconnect(true);
             }
         }
-
-        //private string ReadEmailTemplate(string templatePath)
-        //{
-        //    StreamReader reader = new StreamReader(templatePath);
-        //    string result = reader.ReadToEnd();
-        //    reader.Close();
-        //    return result;
-        //}
     }
 }

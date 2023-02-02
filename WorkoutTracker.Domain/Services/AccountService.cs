@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Web;
 using WorkoutMasters.API.Services;
@@ -36,27 +37,7 @@ namespace WorkoutMasters.Domain.Services
 
         public async Task<UserOutputDTO?> Register(UserInputDTO userDto)
         {
-            _logService.Create("register started");
-
-            if (await _userManager.Users.AnyAsync(x => x.UserName == userDto.UserName) && await _userManager.Users.AnyAsync(x => x.Email == userDto.UserName))
-            {
-                throw new ValidationException("User with this email address already exists");
-            }
-            if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
-            {
-                throw new ValidationException("Please fill in all fields!");
-            }
-            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-            if (!emailMatch.Success)
-            {
-                throw new ValidationException("Invalid email address");
-            }
-            var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
-            if (!passwordMatch.Success)
-            {
-                throw new ValidationException("Invalid password");
-            }
-            _logService.Create("register validation successful");
+            await ValidateUser(userDto);
 
             var newUser = new AppUser()
             {
@@ -64,14 +45,10 @@ namespace WorkoutMasters.Domain.Services
                 UserName = userDto.UserName,
             };
             var res = await _userManager.CreateAsync(newUser, userDto.Password);
+
             if (res.Succeeded)
             {
-                _logService.Create("user created");
-                string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-                string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-                string confirmationLink = $"https://www.workoutmasters.pro/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
-                _emailService.SendVerifyAccountEmail(newUser.Email, confirmationLink);
-                _logService.Create("email sent");
+                CreateAndSendConfirmationEmail(newUser);
                 return CreateUserObject(newUser);
             }
             return null;
@@ -79,17 +56,12 @@ namespace WorkoutMasters.Domain.Services
 
         public async Task<UserOutputDTO?> Login(UserInputDTO userDto)
         {
-            _logService.Create("login started");
             if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
             {
                 throw new ValidationException("Please fill in all fields!");
             }
 
-            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-            if (!emailMatch.Success)
-            {
-                throw new ValidationException("Invalid email address");
-            }
+            InvalidEmailCheck(userDto);
 
             var user = await _userManager.FindByEmailAsync(userDto.UserName);
 
@@ -149,11 +121,7 @@ namespace WorkoutMasters.Domain.Services
                 throw new ValidationException("Please fill the empty field");
             }
 
-            var emailMatch = Regex.Match(sendEmailDTO.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-            if (!emailMatch.Success)
-            {
-                throw new ValidationException("Invalid email address");
-            }
+            InvalidEmailCheck(sendEmailDTO);
 
             var user = await _userManager.FindByEmailAsync(sendEmailDTO.UserName);
             if (user == null)
@@ -163,7 +131,7 @@ namespace WorkoutMasters.Domain.Services
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             string tokenHtmlVersion = HttpUtility.UrlEncode(token);
             string confirmationLink = $"https://www.workoutmasters.pro/account-confirmation?Email={user.Email}&token={tokenHtmlVersion}";
-            _emailService.SendVerifyAccountEmail(user.Email, confirmationLink);
+            _emailService.VerifyAccountEmail(user.Email, confirmationLink);
             return true;
         }
         public async Task<bool> ForgotPassword(SendEmailDTO sendEmailDTO)
@@ -173,11 +141,7 @@ namespace WorkoutMasters.Domain.Services
                 throw new ValidationException("Please fill the empty field");
             }
 
-            var emailMatch = Regex.Match(sendEmailDTO.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-            if (!emailMatch.Success)
-            {
-                throw new ValidationException("Invalid email address");
-            }
+            InvalidEmailCheck(sendEmailDTO);
 
             var user = await _userManager.FindByEmailAsync(sendEmailDTO.UserName);
             if (user == null)
@@ -187,7 +151,7 @@ namespace WorkoutMasters.Domain.Services
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
             string tokenHtmlVersion = HttpUtility.UrlEncode(token);
             string resetPasswordLink = $"https://www.workoutmasters.pro/reset-password?Email={user.Email}&token={tokenHtmlVersion}";
-            _emailService.SendForgotPasswordEmail(user.Email, resetPasswordLink);
+            _emailService.ForgotPasswordEmail(user.Email, resetPasswordLink);
             return true;
         }
 
@@ -228,6 +192,56 @@ namespace WorkoutMasters.Domain.Services
                 UserName = user.UserName,
                 Token = _tokenService.CreateToken(user)
             };
+        }
+
+        private async Task ValidateUser(UserInputDTO userDto)
+        {
+            if (_userManager.Users.Any(x => x.UserName == userDto.UserName) && _userManager.Users.Any(x => x.Email == userDto.UserName))
+            {
+                throw new ValidationException("User with this email address already exists");
+            }
+
+            if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
+            {
+                throw new ValidationException("Please fill in all fields!");
+            }
+
+            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+            if (!emailMatch.Success)
+            {
+                throw new ValidationException("Invalid email address");
+            }
+
+            var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
+            if (!passwordMatch.Success)
+            {
+                throw new ValidationException("Invalid password");
+            }
+        }
+
+        private async Task CreateAndSendConfirmationEmail(AppUser newUser)
+        {
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+            string tokenHtmlVersion = HttpUtility.UrlEncode(token);
+            string confirmationLink = $"https://www.workoutmasters.pro/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
+            _emailService.VerifyAccountEmail(newUser.Email, confirmationLink);
+        }
+
+        private void InvalidEmailCheck(UserInputDTO userDto)
+        {
+            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+            if (!emailMatch.Success)
+            {
+                throw new ValidationException("Invalid email address");
+            }
+        }
+        private void InvalidEmailCheck(SendEmailDTO userDto)
+        {
+            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+            if (!emailMatch.Success)
+            {
+                throw new ValidationException("Invalid email address");
+            }
         }
     }
 }
