@@ -37,7 +37,7 @@ namespace WorkoutMasters.Domain.Services
 
         public async Task<UserOutputDTO?> Register(UserInputDTO userDto)
         {
-            await ValidateUser(userDto);
+            await RegisterValidation(userDto);
 
             var newUser = new AppUser()
             {
@@ -48,7 +48,7 @@ namespace WorkoutMasters.Domain.Services
 
             if (res.Succeeded)
             {
-                CreateAndSendConfirmationEmail(newUser);
+                await CreateAndSendConfirmationEmail(newUser);
                 return CreateUserObject(newUser);
             }
             return null;
@@ -56,36 +56,13 @@ namespace WorkoutMasters.Domain.Services
 
         public async Task<UserOutputDTO?> Login(UserInputDTO userDto)
         {
-            if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
-            {
-                throw new ValidationException("Please fill in all fields!");
-            }
-
-            InvalidEmailCheck(userDto);
+            await LoginValidation(userDto);
 
             var user = await _userManager.FindByEmailAsync(userDto.UserName);
 
             if (user == null)
             {
                 throw new ValidationException("User with this email address doesn't exist");
-            }
-
-            var checkPassword = await _userManager.CheckPasswordAsync(user, userDto.Password);
-
-            var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
-            if (!passwordMatch.Success)
-            {
-                throw new ValidationException("Invalid password");
-            }
-
-            if (checkPassword == false)
-            {
-                throw new ValidationException("Wrong password");
-            }
-
-            if (user.EmailConfirmed == false)
-            {
-                throw new ValidationException("Your account must be confirmed first! Check your email inbox to find your confirmation link");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, userDto.Password, false);
@@ -116,42 +93,27 @@ namespace WorkoutMasters.Domain.Services
 
         public async Task<bool> SendNewConfirmationEmail(SendEmailDTO sendEmailDTO)
         {
-            if (string.IsNullOrEmpty(sendEmailDTO.UserName))
-            {
-                throw new ValidationException("Please fill the empty field");
-            }
+            CheckAllFields(sendEmailDTO);
 
-            InvalidEmailCheck(sendEmailDTO);
+            CheckIfEmailIsValid(sendEmailDTO);
 
             var user = await _userManager.FindByEmailAsync(sendEmailDTO.UserName);
-            if (user == null)
-            {
-                throw new ValidationException("User with this email address doesn't exist.");
-            }
-            string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-            string confirmationLink = $"https://www.workoutmasters.pro/account-confirmation?Email={user.Email}&token={tokenHtmlVersion}";
-            _emailService.VerifyAccountEmail(user.Email, confirmationLink);
+            CheckIfUserExists(user);
+
+            await CreateAndSendConfirmationEmail(user);
             return true;
         }
+
         public async Task<bool> ForgotPassword(SendEmailDTO sendEmailDTO)
         {
-            if (string.IsNullOrEmpty(sendEmailDTO.UserName))
-            {
-                throw new ValidationException("Please fill the empty field");
-            }
+            CheckAllFields(sendEmailDTO);
 
-            InvalidEmailCheck(sendEmailDTO);
+            CheckIfEmailIsValid(sendEmailDTO);
 
             var user = await _userManager.FindByEmailAsync(sendEmailDTO.UserName);
-            if (user == null)
-            {
-                throw new ValidationException("User with this email address doesn't exist.");
-            }
-            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-            string resetPasswordLink = $"https://www.workoutmasters.pro/reset-password?Email={user.Email}&token={tokenHtmlVersion}";
-            _emailService.ForgotPasswordEmail(user.Email, resetPasswordLink);
+            CheckIfUserExists(user);
+
+            await CreateAndSendForgotPasswordEmail(user);
             return true;
         }
 
@@ -178,7 +140,7 @@ namespace WorkoutMasters.Domain.Services
             return true;
         }
 
-        public async Task<UserOutputDTO> GetCurrentUser(string email)
+        public async Task<UserOutputDTO?> GetCurrentUser(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -194,28 +156,93 @@ namespace WorkoutMasters.Domain.Services
             };
         }
 
-        private async Task ValidateUser(UserInputDTO userDto)
+        private async Task RegisterValidation(UserInputDTO userDto)
         {
-            if (_userManager.Users.Any(x => x.UserName == userDto.UserName) && _userManager.Users.Any(x => x.Email == userDto.UserName))
+            if (await _userManager.Users.AnyAsync(x => x.UserName == userDto.UserName) && await _userManager.Users.AnyAsync(x => x.Email == userDto.UserName))
             {
                 throw new ValidationException("User with this email address already exists");
             }
 
-            if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
+            CheckAllFields(userDto);
+
+            CheckIfEmailIsValid(userDto);
+
+            CheckInvalidPassword(userDto);
+        }
+
+        private async Task LoginValidation(UserInputDTO userDto)
+        {
+            CheckAllFields(userDto);
+
+            CheckIfEmailIsValid(userDto);
+
+            CheckInvalidPassword(userDto);
+
+            var user = await _userManager.FindByEmailAsync(userDto.UserName);
+            if (user == null)
             {
-                throw new ValidationException("Please fill in all fields!");
+                return;
             }
 
+            if (!await _userManager.CheckPasswordAsync(user, userDto.Password))
+            {
+                throw new ValidationException("Wrong password");
+            }
+
+            if (!user.EmailConfirmed)
+            {
+                throw new ValidationException("Your account must be confirmed first! Check your email inbox to find your confirmation link");
+            }
+        }
+
+        private static void CheckInvalidPassword(UserInputDTO userDto)
+        {
+            var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
+            if (!passwordMatch.Success)
+            {
+                throw new ValidationException("Invalid password");
+            }
+        }
+
+        private static void CheckIfEmailIsValid(UserInputDTO userDto)
+        {
             var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
             if (!emailMatch.Success)
             {
                 throw new ValidationException("Invalid email address");
             }
+        }
 
-            var passwordMatch = Regex.Match(userDto.Password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
-            if (!passwordMatch.Success)
+        private static void CheckIfEmailIsValid(SendEmailDTO userDto)
+        {
+            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+            if (!emailMatch.Success)
             {
-                throw new ValidationException("Invalid password");
+                throw new ValidationException("Invalid email address");
+            }
+        }
+
+        private static void CheckAllFields(UserInputDTO userDto)
+        {
+            if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
+            {
+                throw new ValidationException("Please fill in all fields!");
+            }
+        }
+
+        private static void CheckAllFields(SendEmailDTO sendEmailDTO)
+        {
+            if (string.IsNullOrEmpty(sendEmailDTO.UserName))
+            {
+                throw new ValidationException("Please fill in all fields!");
+            }
+        }
+
+        private static void CheckIfUserExists(AppUser user)
+        {
+            if (user == null)
+            {
+                throw new ValidationException("User with this email address doesn't exist.");
             }
         }
 
@@ -227,21 +254,12 @@ namespace WorkoutMasters.Domain.Services
             _emailService.VerifyAccountEmail(newUser.Email, confirmationLink);
         }
 
-        private void InvalidEmailCheck(UserInputDTO userDto)
+        private async Task CreateAndSendForgotPasswordEmail(AppUser user)
         {
-            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-            if (!emailMatch.Success)
-            {
-                throw new ValidationException("Invalid email address");
-            }
-        }
-        private void InvalidEmailCheck(SendEmailDTO userDto)
-        {
-            var emailMatch = Regex.Match(userDto.UserName, "^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-            if (!emailMatch.Success)
-            {
-                throw new ValidationException("Invalid email address");
-            }
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string tokenHtmlVersion = HttpUtility.UrlEncode(token);
+            string resetPasswordLink = $"https://www.workoutmasters.pro/reset-password?Email={user.Email}&token={tokenHtmlVersion}";
+            _emailService.ForgotPasswordEmail(user.Email, resetPasswordLink);
         }
     }
 }

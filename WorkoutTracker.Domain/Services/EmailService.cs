@@ -26,10 +26,7 @@ namespace WorkoutMasters.Domain.Services
             email.Subject = "Verify your account";
             email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
 
-            using (var smtp = new SmtpClient())
-            {
-                SendEmail(email);
-            }
+            SendEmail(email);
         }
         public void ForgotPasswordEmail(string userEmail, string resetPasswordLink)
         {
@@ -42,12 +39,10 @@ namespace WorkoutMasters.Domain.Services
             email.Subject = "Reset Password";
             email.Body = new TextPart(TextFormat.Html) { Text = updatedMessageBody };
 
-            using (var smtp = new SmtpClient())
-            {
-                SendEmail(email);
-            }
+            SendEmail(email);
         }
-        private void SendEmail(MimeMessage email)
+
+        private static void SendEmail(MimeMessage email)
         {
             using (var smtp = new SmtpClient())
             {

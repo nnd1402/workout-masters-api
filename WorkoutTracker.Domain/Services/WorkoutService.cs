@@ -34,49 +34,47 @@ namespace WorkoutMasters.Domain.Services
 
         public WorkoutOutputDTO Add(WorkoutInputDTO workoutDTO)
         {
-            if (string.IsNullOrEmpty(workoutDTO.Title))
-            {
-                throw new ValidationException("Title is required");
-            }
-
-            DateTime? dateTime = workoutDTO.Date;
-
-            if (!dateTime.HasValue)
-            {
-                throw new ValidationException("Date is required");
-            }
-
-            _logService.Create("Passed workout validation");
+            ValidateWorkout(workoutDTO);
             workoutDTO.Date = workoutDTO.Date.ToLocalTime();
-            var dtoToEntity = new Workout(workoutDTO);
-            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            dtoToEntity.AppUserId = userId;
-            var workoutEntity = _workoutRepository.Add(dtoToEntity);
+
+            var workoutEntity = ConvertWorkoutDTOtoEntity(workoutDTO);
+            workoutEntity = _workoutRepository.Add(workoutEntity);
+
             _workoutRepository.Save();
-            var result = workoutEntity.ConvertToDTO();
-            return result;
+
+            return workoutEntity.ConvertToDTO();
+        }
+        public void Update(Guid id, WorkoutInputDTO workoutDTO)
+        {
+            ValidateWorkout(workoutDTO);
+            workoutDTO.Date = workoutDTO.Date.ToLocalTime();
+
+            var workoutEntity = ConvertWorkoutDTOtoEntity(workoutDTO);
+            workoutEntity.Id = id;
+
+            _workoutRepository.Update(id, workoutEntity);
+            _workoutRepository.Save();
         }
 
-        public void Update(Guid id, WorkoutInputDTO workoutDTO)
+        private static void ValidateWorkout(WorkoutInputDTO workoutDTO)
         {
             if (string.IsNullOrEmpty(workoutDTO.Title))
             {
                 throw new ValidationException("Title is required");
             }
-
             DateTime? dateTime = workoutDTO.Date;
-
             if (!dateTime.HasValue)
             {
                 throw new ValidationException("Date is required");
             }
-            workoutDTO.Date = workoutDTO.Date.ToLocalTime();
-            var dtoToEntity = new Workout(workoutDTO);
-            dtoToEntity.Id = id;
+        }
+
+        private Workout ConvertWorkoutDTOtoEntity(WorkoutInputDTO workoutDTO)
+        {
+            var workoutEntity = new Workout(workoutDTO);
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            dtoToEntity.AppUserId = userId;
-            _workoutRepository.Update(id, dtoToEntity);
-            _workoutRepository.Save();
+            workoutEntity.AppUserId = userId;
+            return workoutEntity;
         }
 
         public void Delete(Guid id)
@@ -89,22 +87,11 @@ namespace WorkoutMasters.Domain.Services
             _workoutRepository.Delete(id);
             _workoutRepository.Save();
         }
-
         public IEnumerable<WorkoutOutputDTO> GetAllWorkoutsByUser()
         {
-            var result = new List<WorkoutOutputDTO>();
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var workouts = _workoutRepository.GetAll();
-
-            foreach (var workout in workouts)
-            {
-                if (workout.AppUserId == userId)
-                {
-                    var workoutDTO = workout.ConvertToDTO();
-                    result.Add(workoutDTO);
-                }
-            }
-            return result;
+            var workouts = _workoutRepository.GetAll().Where(w => w.AppUserId == userId);
+            return workouts.Select(w => w.ConvertToDTO());
         }
     }
 }
