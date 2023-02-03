@@ -87,6 +87,7 @@ namespace WorkoutMasters.Domain.Services
             _workoutRepository.Delete(id);
             _workoutRepository.Save();
         }
+
         public IEnumerable<WorkoutOutputDTO> GetAllWorkoutsByUser()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);

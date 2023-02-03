@@ -27,12 +27,12 @@ namespace WorkoutMasters.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<UserOutputDTO> Register([FromBody] UserInputDTO userDto)
+        public async Task<ActionResult<UserOutputDTO>> Register([FromBody] UserInputDTO userDto)
         {
             try
             {
                 _logService.Create("entered registration controller method");
-                return Ok(_accountService.Register(userDto));
+                return Ok(await _accountService.Register(userDto));
             }
             catch (Exception ex)
             {
