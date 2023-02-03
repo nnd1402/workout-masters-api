@@ -250,7 +250,7 @@ namespace WorkoutMasters.Domain.Services
         {
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
             string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-            string confirmationLink = $"https://www.workoutmasters.pro/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
+            string confirmationLink = $"{Properties.Resources.BASE_URL}/account-confirmation?Email={newUser.Email}&token={tokenHtmlVersion}";
             _emailService.VerifyAccountEmail(newUser.Email, confirmationLink);
         }
 
@@ -258,7 +258,7 @@ namespace WorkoutMasters.Domain.Services
         {
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
             string tokenHtmlVersion = HttpUtility.UrlEncode(token);
-            string resetPasswordLink = $"https://www.workoutmasters.pro/reset-password?Email={user.Email}&token={tokenHtmlVersion}";
+            string resetPasswordLink = $"{Properties.Resources.BASE_URL}/reset-password?Email={user.Email}&token={tokenHtmlVersion}";
             _emailService.ForgotPasswordEmail(user.Email, resetPasswordLink);
         }
     }
