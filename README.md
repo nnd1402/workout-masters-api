@@ -54,14 +54,15 @@ git clone https://github.com/nnd1402/workout-masters-api.git
    ```sh
    "TokenKey": "Your token key"
    ```
-7. Provide your prefered email host, address and password for configuring information for email sending service. Set this in a secure file like Resources.resx, or add them to the appsettings.json file
+7. Create new folder Properties in WorkoutMasters.Domain project and create new Resources.resx file in it
+8. Provide your prefered email host, address and password for configuring information for email sending service. Set this in your Resources.resx file you just created.
    - Email information example:
    ```sh
    "EmailHost": "Your email host",
    "EmailUsername": "Your email address",
    "EmailPassword": "Your email password"
    ```
-8. Run the API by running the WorkoutMasters.API as your default project. This will start the application on your local machine. Navigate to https://localhost:7116/swagger to access the Swagger UI
+9. Run the API by running the WorkoutMasters.API as your default project. This will start the application on your local machine. Navigate to https://localhost:7116/swagger to access the Swagger UI
 
 ## Configuration
 
